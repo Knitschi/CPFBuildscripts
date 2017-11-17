@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{bbff7495-6756-482d-b453-e68d18b31334}</ProjectGuid>
+    <ProjectHome>..\..\</ProjectHome>
+    <StartupFile>Infrastructure\BuildAutomatImpl_unit_tests.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+    <CommandLineArguments>MyConfig -D bla --inherits Windows</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="0_Configure.py" />
+    <Compile Include="1_Generate.py" />
+    <Compile Include="2_Make.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\buildautomat.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\buildautomat_unit_tests.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\docopt.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\filelocations.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\filesystemaccess.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\filesystemaccess_unit_tests.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\miscosaccess.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl\__init__.py" />
+    <Compile Include="Infrastructure\BuildAutomatImpl_unit_tests.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Generated\Bli\CMakeCache.txt" />
+    <Content Include="Generated\Bli\CMakeFiles\TargetDirectories.txt" />
+    <Content Include="Generated\Bli\_3rdParty\Hunter\toolchain\CMakeLists.txt" />
+    <Content Include="Generated\Bli\_3rdParty\Hunter\toolchain\_builds\CMakeCache.txt" />
+    <Content Include="Generated\Bli\_3rdParty\Hunter\toolchain\_builds\CMakeFiles\TargetDirectories.txt" />
+    <Content Include="Generated\VS2015\CMakeCache.txt" />
+    <Content Include="Generated\VS2015\CMakeFiles\TargetDirectories.txt" />
+    <Content Include="Generated\VS2015\_3rdParty\Hunter\toolchain\CMakeLists.txt" />
+    <Content Include="Generated\VS2015\_3rdParty\Hunter\toolchain\_builds\CMakeCache.txt" />
+    <Content Include="Generated\VS2015\_3rdParty\Hunter\toolchain\_builds\CMakeFiles\TargetDirectories.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Generated\" />
+    <Folder Include="Generated\Bli" />
+    <Folder Include="Generated\Bli\CMakeFiles" />
+    <Folder Include="Generated\Bli\_3rdParty\" />
+    <Folder Include="Generated\Bli\_3rdParty\Hunter\" />
+    <Folder Include="Generated\Bli\_3rdParty\Hunter\toolchain" />
+    <Folder Include="Generated\Bli\_3rdParty\Hunter\toolchain\_builds" />
+    <Folder Include="Generated\Bli\_3rdParty\Hunter\toolchain\_builds\CMakeFiles" />
+    <Folder Include="Generated\VS2015" />
+    <Folder Include="Generated\VS2015\CMakeFiles" />
+    <Folder Include="Generated\VS2015\_3rdParty\" />
+    <Folder Include="Generated\VS2015\_3rdParty\Hunter\" />
+    <Folder Include="Generated\VS2015\_3rdParty\Hunter\toolchain" />
+    <Folder Include="Generated\VS2015\_3rdParty\Hunter\toolchain\_builds" />
+    <Folder Include="Generated\VS2015\_3rdParty\Hunter\toolchain\_builds\CMakeFiles" />
+    <Folder Include="Infrastructure" />
+    <Folder Include="Infrastructure\BuildAutomatImpl" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>
