@@ -219,8 +219,6 @@ class BuildAutomat:
         """
         runs CMake and uses the cached variables from the CMakeCache file.
         """
-        self.m_osAccess.chdir(self.m_fileLocations.getFullPathInfrastructureFolder())
-
         makeFileDirectory = self.m_fileLocations.getFullPathToConfigMakeFileDirectory(configName)
         fullCommand = (
             "cmake " + _quotes(makeFileDirectory) + 
