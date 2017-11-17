@@ -7,6 +7,7 @@ def getCppCodeBaseRootDirFromScriptDir():
     head, tail = os.path.split(os.path.abspath(__file__))
     head, tail = os.path.split(head)
     head, tail = os.path.split(head)
+    head, tail = os.path.split(head)
     head = head.replace("\\", "/")
     return head
 
@@ -23,8 +24,8 @@ class FileLocations:
         self.GENERATED_FILES_DIR = "/Generated"
         self.CONFIGURATION_FILES_DIR = "/Configuration"
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CppCodeBaseDependencies.dot"
-        self.GENERATE_CONFIG_FILE_SCRIPT = "/Sources/CppCodeBase/Scripts/createConfigFile.cmake"
-        self.CONFIG_FILE_TEMPLATE = "/Sources/CppCodeBase/Templates/DeveloperConfigTemplate.cmake.in"
+        self.GENERATE_CONFIG_FILE_SCRIPT = "/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"
+        self.CONFIG_FILE_TEMPLATE = "/Sources/CppCodeBaseCMake/Templates/DeveloperConfigTemplate.cmake.in"
 
     def getFullPathCppCodeBaseRoot(self):
         return self.CppCodeBaseRootDir

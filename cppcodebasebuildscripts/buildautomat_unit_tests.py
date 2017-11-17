@@ -91,7 +91,7 @@ class TestBuildAutomat(unittest.TestCase):
                     '-DPARENT_CONFIG=MyProjectConfig '
                     '-DCMAKE_GENERATOR="Visual Studio 14 2015 Amd64" '
                     '-DCPPCODEBASE_TEST_FILES_DIR="C:/Temp bla/Tests" '
-                    '-P "/MyCppCodeBase/Sources/CppCodeBase/Scripts/createConfigFile.cmake"'
+                    '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
                     )
         self.assertEqual(self.sut.m_osAccess.executeCommandAndPrintResultArg[0][1] , expectedCommand)
 
@@ -113,7 +113,7 @@ class TestBuildAutomat(unittest.TestCase):
                     'cmake '
                     '-DCPPCODEBASE_CONFIG=MyConfig '
                     '-DPARENT_CONFIG=Windows '
-                    '-P "/MyCppCodeBase/Sources/CppCodeBase/Scripts/createConfigFile.cmake"'
+                    '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
                     )
         self.assertEqual(self.sut.m_osAccess.executeCommandAndPrintResultArg[0][1] , expectedCommand)
 
@@ -135,7 +135,7 @@ class TestBuildAutomat(unittest.TestCase):
                     'cmake '
                     '-DCPPCODEBASE_CONFIG=MyConfig '
                     '-DPARENT_CONFIG=Linux '
-                    '-P "/MyCppCodeBase/Sources/CppCodeBase/Scripts/createConfigFile.cmake"'
+                    '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
                     )
         self.assertEqual(self.sut.m_osAccess.executeCommandAndPrintResultArg[0][1] , expectedCommand)
 
