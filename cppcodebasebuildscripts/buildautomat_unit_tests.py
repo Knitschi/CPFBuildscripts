@@ -45,7 +45,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.locations = filelocations.FileLocations(self.codeBaseRoot)
         self.sut.m_fileLocations = self.locations
         self.sut.m_fsAccess = filesystemaccess.FakeFileSystemAccess()
-        self.sut.m_fsAccess.mkdirs(self.locations.getFullPathInfrastructureFolder())
+        # self.sut.m_fsAccess.mkdirs(self.locations.getFullPathInfrastructureFolder())
         self.sut.m_fsAccess.mkdirs(self.locations.getFullPathToSourceFolder())
         self.sut.m_fsAccess.mkdirs(self.locations.getFullPathToSourceFolder())
 
@@ -243,7 +243,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertTrue( not "cmake" in self.sut.m_osAccess.consoleOutput)
 
 
-    @patch('BuildAutomatImpl.miscosaccess.FakeMiscOsAccess.executeCommandAndPrintResult', return_value = False)
+    @patch('cppcodebasebuildscripts.miscosaccess.FakeMiscOsAccess.executeCommandAndPrintResult', return_value = False)
     def test_generateMakefiles_returns_false_if_cmake_call_fails(self, mock_executeCommandAndPrintResult):
         # setup
         argv = {"<config_name>" : "MyConfig"}

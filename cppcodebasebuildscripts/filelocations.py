@@ -22,16 +22,12 @@ class FileLocations:
         self.CMAKELISTS_ROOT_DIR = "/Sources"
         self.GENERATED_FILES_DIR = "/Generated"
         self.CONFIGURATION_FILES_DIR = "/Configuration"
-        self.INFRASTRUCTURE_DIR = "/Infrastructure"
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CppCodeBaseDependencies.dot"
         self.GENERATE_CONFIG_FILE_SCRIPT = "/Sources/CppCodeBase/Scripts/createConfigFile.cmake"
         self.CONFIG_FILE_TEMPLATE = "/Sources/CppCodeBase/Templates/DeveloperConfigTemplate.cmake.in"
 
     def getFullPathCppCodeBaseRoot(self):
         return self.CppCodeBaseRootDir
-
-    def getFullPathInfrastructureFolder(self):
-        return self.getFullPathCppCodeBaseRoot() + self.INFRASTRUCTURE_DIR
 
     def getFullPathGeneratedFolder(self):
         return self.getFullPathCppCodeBaseRoot() + self.GENERATED_FILES_DIR
