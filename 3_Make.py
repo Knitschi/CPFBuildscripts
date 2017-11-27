@@ -1,6 +1,6 @@
 ﻿#!/usr/bin/python3
 """Usage:
-    2_Make.py [<config_name>] [--target <target>] [--config <config>] [--help]
+    3_Make.py [<config_name>] [--target <target>] [--config <config>] [--help]
 
     This script builds the given target in the given configuration.
 
@@ -26,5 +26,5 @@ if __name__ == "__main__":
     args = docopt(__doc__, version='2_Make 1.0')
     automat = buildautomat.BuildAutomat()
     if not automat.make(args):
-        print("Error: Script 2_Make.py failed.")
+        print("Error: Script 3_Make.py failed.")
         sys.exit(2)

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Usage: 0_Configure.py <config_name> [--inherits parent_config] [-D definition]...
+"""Usage: 1_Configure.py <config_name> [--inherits parent_config] [-D definition]...
 
     Running this script generates the file
 
@@ -7,7 +7,7 @@
 
     which contains developer specific CMake variables that are required to generate the make files for the CppCodeBase.
     Among others these include the used CMake generator and the compilation toolchain.
-    When doing the configure step, <config_name> can be freely chosen. The 1_Generate.py and 2_Make.py step will later
+    When doing the configure step, <config_name> can be freely chosen. The 2_Generate.py and 3_Make.py step will later
     take the chosen <config_name> to create makefiles or make the created configuration.
 
     The easiest way to use this is to run the script without options and then edit the generated file. Setting the
@@ -43,9 +43,9 @@ from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts.docopt import docop
 from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts import buildautomat
 
 if __name__ == "__main__":
-    args = docopt(__doc__, version='0_Configure 1.0')
+    args = docopt(__doc__, version='1_Configure 1.0')
     automat = buildautomat.BuildAutomat()
     if not automat.configure(args):
-        print("Error: Script 0_Configure.py failed.")
+        print("Error: Script 1_Configure.py failed.")
         sys.exit(2)
 

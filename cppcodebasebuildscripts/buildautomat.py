@@ -87,7 +87,7 @@ class BuildAutomat:
                 configName = self._getExistingConfigName()
 
             if not self._hasExistingCacheFile(configName):
-                self.m_osAccess.printConsole("No existing CMakeCache.txt file found. You need to run 1_Generate.py before running 2_Make.py");
+                self.m_osAccess.printConsole("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py");
                 return False
 
             cmakeBuildCommand = self._getCMakeBuildCommand(configName, args)
@@ -138,7 +138,7 @@ class BuildAutomat:
         if configName: # config option was given
             configFile = self.m_fileLocations.getFullPathToConfigFile(configName)
             if not self.m_fsAccess.exists(configFile):
-                raise Exception('error: There is no configuration file "' + configFile + '". Did you forget to run 0_Configure.py?')
+                raise Exception('error: There is no configuration file "' + configFile + '". Did you forget to run 1_Configure.py?')
             return configName
         return None
 
@@ -151,7 +151,7 @@ class BuildAutomat:
         """
         configFileConfigs = self._getExistingConfigFileConfigs()
         if not configFileConfigs:
-            raise Exception('error: There is no existing configuration file. Run 0_Configure.py to create one.')
+            raise Exception('error: There is no existing configuration file. Run 1_Configure.py to create one.')
         configWithCacheFile = self._getFirstConfigThatHasChacheFile(configFileConfigs)
         if configWithCacheFile:
             return configWithCacheFile
