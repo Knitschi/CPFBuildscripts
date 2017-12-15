@@ -2,12 +2,12 @@
 
 import os
 
-def getCppCodeBaseRootDirFromScriptDir():
+def get_cppcodebase_root_dir_from_script_dir():
     """ This should be the only entry point for defining absolute pathes """
-    head, tail = os.path.split(os.path.abspath(__file__))
-    head, tail = os.path.split(head)
-    head, tail = os.path.split(head)
-    head, tail = os.path.split(head)
+    head = os.path.split(os.path.abspath(__file__))[0]
+    head = os.path.split(head)[0]
+    head = os.path.split(head)[0]
+    head = os.path.split(head)[0]
     head = head.replace("\\", "/")
     return head
 
@@ -18,8 +18,8 @@ class FileLocations:
     Note that this knowledge is partially duplicated in the jenkins pipeline script.
     """
 
-    def __init__(self, cppCodeBaseRootDir):
-        self.CppCodeBaseRootDir = cppCodeBaseRootDir
+    def __init__(self, cppcodebase_root_dir):
+        self.cppcodebase_root_dir = cppcodebase_root_dir
         self.CMAKELISTS_ROOT_DIR = "/Sources"
         self.GENERATED_FILES_DIR = "/Generated"
         self.CONFIGURATION_FILES_DIR = "/Configuration"
@@ -27,25 +27,25 @@ class FileLocations:
         self.GENERATE_CONFIG_FILE_SCRIPT = "/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"
         self.CONFIG_FILE_TEMPLATE = "/Sources/CppCodeBaseCMake/Templates/DeveloperConfigTemplate.cmake.in"
 
-    def getFullPathCppCodeBaseRoot(self):
-        return self.CppCodeBaseRootDir
+    def get_full_path_cppcodebase_root(self):
+        return self.cppcodebase_root_dir
 
-    def getFullPathGeneratedFolder(self):
-        return self.getFullPathCppCodeBaseRoot() + self.GENERATED_FILES_DIR
+    def get_full_path_generated_folder(self):
+        return self.get_full_path_cppcodebase_root() + self.GENERATED_FILES_DIR
 
-    def getFullPathConfigurationFolder(self):
-        return self.getFullPathCppCodeBaseRoot() + self.CONFIGURATION_FILES_DIR
+    def get_full_path_configuration_folder(self):
+        return self.get_full_path_cppcodebase_root() + self.CONFIGURATION_FILES_DIR
 
-    def getFullPathToSourceFolder(self):
-        return self.getFullPathCppCodeBaseRoot() + self.CMAKELISTS_ROOT_DIR
+    def get_full_path_source_folder(self):
+        return self.get_full_path_cppcodebase_root() + self.CMAKELISTS_ROOT_DIR
 
-    def getFullPathToConfigMakeFileDirectory(self, configName):
-        makeFileDirectory = self.getFullPathGeneratedFolder() + "/" + configName
-        return makeFileDirectory
+    def get_full_path_config_makefile_folder(self, configName):
+        makefile_directory = self.get_full_path_generated_folder() + "/" + configName
+        return makefile_directory
 
-    def getConfigFileEnding(self):
+    def get_config_file_ending(self):
         return ".config.cmake"
 
-    def getFullPathToConfigFile(self, configName):
-        return self.getFullPathConfigurationFolder() + "/" + configName + self.getConfigFileEnding()
+    def get_full_path_config_file(self, configName):
+        return self.get_full_path_configuration_folder() + "/" + configName + self.get_config_file_ending()
 

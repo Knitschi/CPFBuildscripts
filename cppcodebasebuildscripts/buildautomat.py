@@ -18,7 +18,7 @@ class BuildAutomat:
     """
     def __init__(self):
         # Get information about where is what in the codebase
-        self.m_file_locations = filelocations.FileLocations(filelocations.getCppCodeBaseRootDirFromScriptDir())
+        self.m_file_locations = filelocations.FileLocations(filelocations.get_cppcodebase_root_dir_from_script_dir())
         # Object to operate on the file-system
         self.m_fs_access = filesystemaccess.FileSystemAccess()
         # Object to access other os functionality
@@ -48,10 +48,10 @@ class BuildAutomat:
                 cmake_command += " " + " ".join(cmake_arg_definitions)
 
             cmake_command += " -P " + _quotes(
-                self.m_file_locations.getFullPathCppCodeBaseRoot() +
+                self.m_file_locations.get_full_path_cppcodebase_root() +
                 self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
-            return self.m_os_access.executeCommandAndPrintResult(cmake_command)
+            return self.m_os_access.execute_command(cmake_command)
 
         except BaseException as exception:
             return self._print_exception(exception)
@@ -90,12 +90,12 @@ class BuildAutomat:
                 config_name = self._get_existing_config_name()
 
             if not self._has_existing_cache_file(config_name):
-                self.m_os_access.printConsole("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
+                self.m_os_access.print_console("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
                 return False
 
             cmake_build_command = self._get_cmake_build_command(config_name, args)
 
-            return self.m_os_access.executeCommandAndPrintResult(cmake_build_command)
+            return self.m_os_access.execute_command(cmake_build_command)
 
         except BaseException as exception:
             return self._print_exception(exception)
@@ -129,14 +129,14 @@ class BuildAutomat:
         return inherit_option
 
     def _print_exception(self, exception):
-        self.m_os_access.printConsole(str(exception))
+        self.m_os_access.print_console(str(exception))
         return False
 
 
     def _get_config_name_from_arguments(self, args):
         config_name = args[_CONFIG_NAME_KEY]
         if config_name: # config option was given
-            config_file = self.m_file_locations.getFullPathToConfigFile(config_name)
+            config_file = self.m_file_locations.get_full_path_config_file(config_name)
             if not self.m_fs_access.exists(config_file):
                 raise Exception('error: There is no configuration file "' + config_file + '". Did you forget to run 1_Configure.py?')
             return config_name
@@ -160,11 +160,11 @@ class BuildAutomat:
 
     def _get_existing_config_file_configs(self):
         configs = []
-        if self.m_fs_access.isdir(self.m_file_locations.getFullPathConfigurationFolder()):
-            entries = self.m_fs_access.listdir(self.m_file_locations.getFullPathConfigurationFolder())
+        if self.m_fs_access.isdir(self.m_file_locations.get_full_path_configuration_folder()):
+            entries = self.m_fs_access.listdir(self.m_file_locations.get_full_path_configuration_folder())
             for entry in entries:
-                full_entry_path = self.m_file_locations.getFullPathConfigurationFolder() + "/" + entry
-                config_file_ending = self.m_file_locations.getConfigFileEnding()
+                full_entry_path = self.m_file_locations.get_full_path_configuration_folder() + "/" + entry
+                config_file_ending = self.m_file_locations.get_config_file_ending()
                 length_ending = len(config_file_ending)
                 ending = entry[-length_ending:]
                 if self.m_fs_access.isfile(full_entry_path) and ending == config_file_ending:
@@ -181,7 +181,7 @@ class BuildAutomat:
 
 
     def _has_existing_cache_file(self, config_name):
-        cache_file_path = self.m_file_locations.getFullPathGeneratedFolder() + "/" + config_name + "/CMakeCache.txt"
+        cache_file_path = self.m_file_locations.get_full_path_generated_folder() + "/" + config_name + "/CMakeCache.txt"
         return self.m_fs_access.isfile(cache_file_path)
 
 
@@ -189,7 +189,7 @@ class BuildAutomat:
         """
         Deletes the make folder to make sure that we start from scratch.
         """
-        full_config_path = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        full_config_path = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
         if self.m_fs_access.exists(full_config_path):
             self.m_fs_access.rmtree(full_config_path)
 
@@ -199,9 +199,9 @@ class BuildAutomat:
         Assembles the correct arguments for cmake and executes the cmake generate step
         """
 
-        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
-        sources_directory = self.m_file_locations.getFullPathToSourceFolder()
-        full_path_config_file = self.m_file_locations.getFullPathToConfigFile(config_name)
+        makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
+        sources_directory = self.m_file_locations.get_full_path_source_folder()
+        full_path_config_file = self.m_file_locations.get_full_path_config_file(config_name)
 
         command = (
             "cmake"
@@ -215,7 +215,7 @@ class BuildAutomat:
             " --graphviz="+ _quotes(makefile_directory  + "/" + self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
             )
 
-        if not self.m_os_access.executeCommandAndPrintResult(command):
+        if not self.m_os_access.execute_command(command):
             raise Exception("The python script failed because the call to cmake failed!")
 
 
@@ -223,13 +223,13 @@ class BuildAutomat:
         """
         runs CMake and uses the cached variables from the CMakeCache file.
         """
-        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
         full_command = (
             "cmake " + _quotes(makefile_directory) +
             " --graphviz="+ _quotes(makefile_directory + "/" + self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
             )
 
-        if not self.m_os_access.executeCommandAndPrintResult(full_command):
+        if not self.m_os_access.execute_command(full_command):
             raise Exception("The python script failed because the call to cmake failed!")
 
 
@@ -242,7 +242,7 @@ class BuildAutomat:
         multicore_option = self._get_build_tool_multicore_option(config_name)
 
         # now assemble the command
-        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
         command = 'cmake --build ' + _quotes(makefile_directory)
 
         if target:
@@ -279,10 +279,10 @@ class BuildAutomat:
 
     def _get_cmake_generator_of_config(self, config_name):
         # get the name of the used generator
-        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
         cmake_introspection_command = []
         cmake_introspection_command.append('cmake -L -B' + _quotes(makefile_directory))
-        output = self.m_os_access.runCommandsInMultipleProcesses(cmake_introspection_command, None, False)[0]['stdout']
+        output = self.m_os_access.execute_commands_in_parallel(cmake_introspection_command, None, False)[0]['stdout']
         lines = output.split('\n')
         for line in lines:
             if 'CMAKE_GENERATOR:STRING=' in line:
