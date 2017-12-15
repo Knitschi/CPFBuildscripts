@@ -1,27 +1,28 @@
 ﻿#!/usr/bin/python3
-
-
-import os.path
-
-# ours
-from . import docopt
+"""
+This module provides the BuildAutomat class which implements the functionality
+of the primary build scripts.
+"""
 
 from . import filelocations
 from . import miscosaccess
 from . import filesystemaccess
 
-_configNameKey = '<config_name>'
-_targetKey = '--target'
-_configKey = '--config'
+_CONFIG_NAME_KEY = '<config_name>'
+_TARGET_KEY = '--target'
+_CONFIG_KEY = '--config'
 
 class BuildAutomat:
     """
     The entry point for running the various steps of the make-pipeline.
     """
     def __init__(self):
-        self.m_fileLocations = filelocations.FileLocations(filelocations.getCppCodeBaseRootDirFromScriptDir())  # Get information about where is what in the codebase
-        self.m_fsAccess = filesystemaccess.FileSystemAccess()                   # Object to operate on the file-system
-        self.m_osAccess = miscosaccess.MiscOsAccess()                           # Object to access other os functionality
+        # Get information about where is what in the codebase
+        self.m_file_locations = filelocations.FileLocations(filelocations.getCppCodeBaseRootDirFromScriptDir())
+        # Object to operate on the file-system
+        self.m_fs_access = filesystemaccess.FileSystemAccess()
+        # Object to access other os functionality
+        self.m_os_access = miscosaccess.MiscOsAccess()
 
 
     def configure(self, args):
@@ -29,51 +30,53 @@ class BuildAutomat:
         Runs a cmake script in order to generate the developer cmake configuration file.
         """
         try:
-            args = self._addQuotesToDOptions(args)
+            args = self._add_quotes_to_d_options(args)
 
-            inheritOption = self._getInheritOption(args)
+            inherit_option = self._get_inherit_option(args)
 
             # add basic options
-            cmakeCommand = "cmake" \
-                        + " -DCPPCODEBASE_CONFIG=" + args[_configNameKey] \
-                        + " -DPARENT_CONFIG=" + inheritOption \
+            cmake_command = "cmake" \
+                        + " -DCPPCODEBASE_CONFIG=" + args[_CONFIG_NAME_KEY] \
+                        + " -DPARENT_CONFIG=" + inherit_option \
 
             # Get the variable definitions
             definitions = args["-D"]
             if definitions:
-                cmakeArgDefinitions = []
+                cmake_arg_definitions = []
                 for definition in definitions:
-                     cmakeArgDefinitions.append( "-D" + definition)
-                cmakeCommand += " " + " ".join(cmakeArgDefinitions)            
-                    
-            cmakeCommand += " -P " + _quotes(self.m_fileLocations.getFullPathCppCodeBaseRoot() + self.m_fileLocations.GENERATE_CONFIG_FILE_SCRIPT)
+                    cmake_arg_definitions.append("-D" + definition)
+                cmake_command += " " + " ".join(cmake_arg_definitions)
 
-            return self.m_osAccess.executeCommandAndPrintResult(cmakeCommand)
+            cmake_command += " -P " + _quotes(
+                self.m_file_locations.getFullPathCppCodeBaseRoot() +
+                self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
-        except BaseException as e:
-            return self._printOrRethrow(e)
+            return self.m_os_access.executeCommandAndPrintResult(cmake_command)
+
+        except BaseException as exception:
+            return self._print_exception(exception)
 
 
-    def generateMakefiles(self, args):
+    def generate_make_files(self, args):
         """
         Runs the cmake to create the makefiles.
         """
         try:
-            configName = self._getConfigNameFromArguments(args)
-            if configName:
-                self._clearMakefileDir(configName)
+            config_name = self._get_config_name_from_arguments(args)
+            if config_name:
+                self._clear_makefile_dir(config_name)
 
             else: # check for an existing configuration file
-                configName = self._getExistingConfigName()
-                if self._hasExistingCacheFile(configName):
-                    self._callCMakeForExistingCacheFile(configName)
+                config_name = self._get_existing_config_name()
+                if self._has_existing_cache_file(config_name):
+                    self._call_cmake_for_existing_cache_file(config_name)
                     return True
 
-            self._callCMakeWithFullArguments(configName)
+            self._call_cmake_with_full_arguments(config_name)
             return True
 
-        except BaseException as e:
-            return self._printOrRethrow(e)
+        except BaseException as exception:
+            return self._print_exception(exception)
 
 
     def make(self, args):
@@ -82,164 +85,165 @@ class BuildAutomat:
         """
         try:
 
-            configName = self._getConfigNameFromArguments(args)
-            if not configName:
-                configName = self._getExistingConfigName()
+            config_name = self._get_config_name_from_arguments(args)
+            if not config_name:
+                config_name = self._get_existing_config_name()
 
-            if not self._hasExistingCacheFile(configName):
-                self.m_osAccess.printConsole("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py");
+            if not self._has_existing_cache_file(config_name):
+                self.m_os_access.printConsole("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
                 return False
 
-            cmakeBuildCommand = self._getCMakeBuildCommand(configName, args)
+            cmake_build_command = self._get_cmake_build_command(config_name, args)
 
-            return self.m_osAccess.executeCommandAndPrintResult(cmakeBuildCommand )
+            return self.m_os_access.executeCommandAndPrintResult(cmake_build_command)
 
-        except BaseException as e:
-            return self._printOrRethrow(e)
+        except BaseException as exception:
+            return self._print_exception(exception)
 
 
-    ###############################################################################################################
+###############################################################################################################
 
-    def _addQuotesToDOptions(self, args):
+    def _add_quotes_to_d_options(self, args):
         """
         This is necessary because docopt will loose quotes around definitions that contain spaces.
         """
-        dOptions = args['-D']
-        if dOptions:
-            for index, option in enumerate(dOptions):
+        d_options = args['-D']
+        if d_options:
+            for index, option in enumerate(d_options):
                 if '=' not in option:
                     raise Exception('-D option "' + option + '" does not seem to be a valid definition because of a missing "=" character.')
                 definition = option.split('=')[1]
                 if ' ' in definition:
-                    cmakeVariable = option.split('=')[0]
-                    dOptions[index] = cmakeVariable + '=' + _quotes(definition)
-        args['-D'] = dOptions
+                    cmake_variable = option.split('=')[0]
+                    d_options[index] = cmake_variable + '=' + _quotes(definition)
+        args['-D'] = d_options
         return args
 
-    def _getInheritOption(self,args):
+    def _get_inherit_option(self, args):
         """
         Returns the argument or the default inheritance depending on the system.
         """
-        inheritOption = args['--inherits']
-        if not inheritOption:
-            inheritOption = self.m_osAccess.system()
-        return inheritOption
+        inherit_option = args['--inherits']
+        if not inherit_option:
+            inherit_option = self.m_os_access.system()
+        return inherit_option
 
-    def _printOrRethrow(self, exception):
-        if exception:
-            self.m_osAccess.printConsole(str(exception))
-        else:
-            raise
+    def _print_exception(self, exception):
+        self.m_os_access.printConsole(str(exception))
         return False
 
 
-    def _getConfigNameFromArguments(self, args):
-        configName = args[_configNameKey]
-        if configName: # config option was given
-            configFile = self.m_fileLocations.getFullPathToConfigFile(configName)
-            if not self.m_fsAccess.exists(configFile):
-                raise Exception('error: There is no configuration file "' + configFile + '". Did you forget to run 1_Configure.py?')
-            return configName
+    def _get_config_name_from_arguments(self, args):
+        config_name = args[_CONFIG_NAME_KEY]
+        if config_name: # config option was given
+            config_file = self.m_file_locations.getFullPathToConfigFile(config_name)
+            if not self.m_fs_access.exists(config_file):
+                raise Exception('error: There is no configuration file "' + config_file + '". Did you forget to run 1_Configure.py?')
+            return config_name
         return None
 
 
-    def _getExistingConfigName(self):
-        """ 
+    def _get_existing_config_name(self):
+        """
         The function will return the first config for which a config file and a CMakeCache.txt file exists.
         If there is no config for which a CMakeCache.txt exists, it will return the first config in the
         Configurations directory.
         """
-        configFileConfigs = self._getExistingConfigFileConfigs()
-        if not configFileConfigs:
+        config_file_configs = self._get_existing_config_file_configs()
+        if not config_file_configs:
             raise Exception('error: There is no existing configuration file. Run 1_Configure.py to create one.')
-        configWithCacheFile = self._getFirstConfigThatHasChacheFile(configFileConfigs)
-        if configWithCacheFile:
-            return configWithCacheFile
+        config_with_cache_file = self._get_first_config_that_has_cache_file(config_file_configs)
+        if config_with_cache_file:
+            return config_with_cache_file
         else:
-            return configFileConfigs[0]
+            return config_file_configs[0]
 
-    def _getExistingConfigFileConfigs(self):
+    def _get_existing_config_file_configs(self):
         configs = []
-        if self.m_fsAccess.isdir(self.m_fileLocations.getFullPathConfigurationFolder()):
-            entries = self.m_fsAccess.listdir( self.m_fileLocations.getFullPathConfigurationFolder() )
+        if self.m_fs_access.isdir(self.m_file_locations.getFullPathConfigurationFolder()):
+            entries = self.m_fs_access.listdir(self.m_file_locations.getFullPathConfigurationFolder())
             for entry in entries:
-                fullEntryPath = self.m_fileLocations.getFullPathConfigurationFolder() + "/" + entry
-                configFileEnding = self.m_fileLocations.getConfigFileEnding()
-                lengthEnding = len(configFileEnding)
-                ending =entry[-lengthEnding:]
-                if self.m_fsAccess.isfile(fullEntryPath) and ending == configFileEnding:
+                full_entry_path = self.m_file_locations.getFullPathConfigurationFolder() + "/" + entry
+                config_file_ending = self.m_file_locations.getConfigFileEnding()
+                length_ending = len(config_file_ending)
+                ending = entry[-length_ending:]
+                if self.m_fs_access.isfile(full_entry_path) and ending == config_file_ending:
                     length = len(entry)
-                    configs.append(entry[:(length - lengthEnding)])
+                    configs.append(entry[:(length - length_ending)])
         return configs
 
 
-    def _getFirstConfigThatHasChacheFile(self, configs):
+    def _get_first_config_that_has_cache_file(self, configs):
         for config in configs:
-            if self._hasExistingCacheFile(config):
+            if self._has_existing_cache_file(config):
                 return config
         return None
 
 
-    def _hasExistingCacheFile(self, configName):
-        cacheFilePath = self.m_fileLocations.getFullPathGeneratedFolder() + "/" + configName + "/CMakeCache.txt"
-        return self.m_fsAccess.isfile(cacheFilePath)
+    def _has_existing_cache_file(self, config_name):
+        cache_file_path = self.m_file_locations.getFullPathGeneratedFolder() + "/" + config_name + "/CMakeCache.txt"
+        return self.m_fs_access.isfile(cache_file_path)
 
 
-    def _clearMakefileDir(self, configName):
+    def _clear_makefile_dir(self, config_name):
         """
         Deletes the make folder to make sure that we start from scratch.
         """
-        fullConfigPath = self.m_fileLocations.getFullPathToConfigMakeFileDirectory(configName)
-        if self.m_fsAccess.exists(fullConfigPath):
-            self.m_fsAccess.rmtree(fullConfigPath)
+        full_config_path = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        if self.m_fs_access.exists(full_config_path):
+            self.m_fs_access.rmtree(full_config_path)
 
 
-    def _callCMakeWithFullArguments(self, configName):
+    def _call_cmake_with_full_arguments(self, config_name):
         """
         Assembles the correct arguments for cmake and executes the cmake generate step
         """
 
-        makeFileDirectory = self.m_fileLocations.getFullPathToConfigMakeFileDirectory(configName)
-        sourcesDirectory = self.m_fileLocations.getFullPathToSourceFolder()
-        fullPathConfigFile = self.m_fileLocations.getFullPathToConfigFile(configName)
+        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        sources_directory = self.m_file_locations.getFullPathToSourceFolder()
+        full_path_config_file = self.m_file_locations.getFullPathToConfigFile(config_name)
 
-        command = ( 
-                        "cmake"
-                        " -H" + _quotes(sourcesDirectory) +        # set the cmakelists root directory
-                        " -B" + _quotes(makeFileDirectory) +       # set the folder for the generated make files
-                        " -C" + _quotes(fullPathConfigFile) +  # set the generator (makefileType)
-                        " --graphviz="+ _quotes( makeFileDirectory  + "/" + self.m_fileLocations.TARGET_DEPENDENCIES_DOT_FILE_NAME)          # Generate the .dot file that is used to document the target dependencies.
-                        )
+        command = (
+            "cmake"
+            # set the cmakelists root directory
+            " -H" + _quotes(sources_directory) +
+            # set the folder for the generated make files
+            " -B" + _quotes(makefile_directory) +
+            # set the generator (makefileType)
+            " -C" + _quotes(full_path_config_file) +
+            # Generate the .dot file that is used to document the target dependencies.
+            " --graphviz="+ _quotes(makefile_directory  + "/" + self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
+            )
 
-        if not self.m_osAccess.executeCommandAndPrintResult(command):
+        if not self.m_os_access.executeCommandAndPrintResult(command):
             raise Exception("The python script failed because the call to cmake failed!")
 
 
-    def _callCMakeForExistingCacheFile(self, configName):
+    def _call_cmake_for_existing_cache_file(self, config_name):
         """
         runs CMake and uses the cached variables from the CMakeCache file.
         """
-        makeFileDirectory = self.m_fileLocations.getFullPathToConfigMakeFileDirectory(configName)
-        fullCommand = (
-            "cmake " + _quotes(makeFileDirectory) + 
-            " --graphviz="+ _quotes(makeFileDirectory + "/" + self.m_fileLocations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
+        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        full_command = (
+            "cmake " + _quotes(makefile_directory) +
+            " --graphviz="+ _quotes(makefile_directory + "/" + self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
             )
-    
-        if not self.m_osAccess.executeCommandAndPrintResult(fullCommand):
+
+        if not self.m_os_access.executeCommandAndPrintResult(full_command):
             raise Exception("The python script failed because the call to cmake failed!")
 
 
-    def _getCMakeBuildCommand(self, configName, args):
+    def _get_cmake_build_command(self, config_name, args):
 
         # get command argument values
-        isIncrementalBuild = args[_configNameKey] is None
-        target = args[_targetKey]
-        config = args[_configKey]
-        multicoreOption = self._getBuildToolMulticoreOption(configName)
+        is_incremental_build = args[_CONFIG_NAME_KEY] is None
+        target = args[_TARGET_KEY]
+        config = args[_CONFIG_KEY]
+        multicore_option = self._get_build_tool_multicore_option(config_name)
 
         # now assemble the command
-        makeFileDirectory = self.m_fileLocations.getFullPathToConfigMakeFileDirectory(configName)
-        command = 'cmake --build ' + _quotes(makeFileDirectory)
+        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        command = 'cmake --build ' + _quotes(makefile_directory)
 
         if target:
             command += ' --target ' + target
@@ -247,99 +251,54 @@ class BuildAutomat:
         if config:
             command += ' --config ' + config
 
-        if not isIncrementalBuild:
+        if not is_incremental_build:
             command += ' --clean-first'
 
-        if multicoreOption:
-            command +=' -- ' + multicoreOption
+        if multicore_option:
+            command +=' -- ' + multicore_option
 
         return command
 
 
-    def _getBuildToolMulticoreOption(self, configName):
+    def _get_build_tool_multicore_option(self, config_name):
         """
         In order to get the right option we need to introspect the used CMAKE_GENERATOR
         of the configuration.
         """
-        generator = self._getCMakeGeneratorOfConfig(configName)
+        generator = self._get_cmake_generator_of_config(config_name)
 
-        nrCpus = str(self.m_osAccess.cpu_count())
+        nr_cpus = str(self.m_os_access.cpu_count())
 
         if 'Visual Studio' in generator:
-            return "/maxcpucount:"+ nrCpus
+            return "/maxcpucount:"+ nr_cpus
         elif generator == 'Unix Makefiles':
-            return '-j' + nrCpus
+            return '-j' + nr_cpus
         else:
             return None
 
 
-    def _getCMakeGeneratorOfConfig(self, configName):
+    def _get_cmake_generator_of_config(self, config_name):
         # get the name of the used generator
-        makeFileDirectory = self.m_fileLocations.getFullPathToConfigMakeFileDirectory(configName)
-        cmakeIntrospectionCommand = []
-        cmakeIntrospectionCommand.append( 'cmake -L -B' + _quotes(makeFileDirectory))
-        output = self.m_osAccess.runCommandsInMultipleProcesses(cmakeIntrospectionCommand, None, False)[0]['stdout']
+        makefile_directory = self.m_file_locations.getFullPathToConfigMakeFileDirectory(config_name)
+        cmake_introspection_command = []
+        cmake_introspection_command.append('cmake -L -B' + _quotes(makefile_directory))
+        output = self.m_os_access.runCommandsInMultipleProcesses(cmake_introspection_command, None, False)[0]['stdout']
         lines = output.split('\n')
         for line in lines:
             if 'CMAKE_GENERATOR:STRING=' in line:
-                generatorName = line[23:]
-                return generatorName
+                generator_name = line[23:]
+                return generator_name
         return None
 
 
-
-
-########### free functions ###################################################################################
-
-
+########### free functions #########################################################################
 def _quotes(string):
     return '"' + string + '"'
 
 
-def _getOptionFromArgs(args,possibleOptions):
-    for option in possibleOptions:
-        optionArg = '--' + option
-        if optionArg in args and args[optionArg] is True:
+def _get_option_from_args(args, possible_options):
+    for option in possible_options:
+        option_arg = '--' + option
+        if option_arg in args and args[option_arg] is True:
             return option
     return None
-
-
-
-
-"""
-Example for implementing a thread
-
-def _runCommandsInMultipleThreads(commands):
-    
-    # Setup and start one thread for each command.
-    threads = [] 
-
-    for command in commands: 
-        thread = CommandRunnerThread(command) 
-        threads.append(thread) 
-        thread.start() 
-
-    # Wait until all threads have finished.
-    for thread in threads: 
-        thread.join()
-
-    # Collect and return the results.
-    results = [];
-    for thread in threads: 
-        results.append( thread.result)
-        
-    return results
-
-# ---------------------------------------------------------------------------------------
-class CommandRunnerThread(threading.Thread):
-    
-    def __init__(self, command):
-        threading.Thread.__init__(self)
-        self.command = command
-        self.result = None
-        
-    def run(self):
-        self.result = self.m_osAccess.executeCommand(self.command)
-        #self.m_osAccess.printConsole(self.result['stdout'])
-        #self.m_osAccess.printConsole(self.result['stderr'])
-"""
