@@ -87,7 +87,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expectedCommand = (
                     'cmake '
-                    '-DCPPCODEBASE_CONFIG=MyConfig '
+                    '-DCCB_CONFIG=MyConfig '
                     '-DPARENT_CONFIG=MyProjectConfig '
                     '-DCMAKE_GENERATOR="Visual Studio 14 2015 Amd64" '
                     '-DCPPCODEBASE_TEST_FILES_DIR="C:/Temp bla/Tests" '
@@ -111,7 +111,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expectedCommand = (
                     'cmake '
-                    '-DCPPCODEBASE_CONFIG=MyConfig '
+                    '-DCCB_CONFIG=MyConfig '
                     '-DPARENT_CONFIG=Windows '
                     '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
                     )
@@ -133,7 +133,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expectedCommand = (
                     'cmake '
-                    '-DCPPCODEBASE_CONFIG=MyConfig '
+                    '-DCCB_CONFIG=MyConfig '
                     '-DPARENT_CONFIG=Linux '
                     '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
                     )

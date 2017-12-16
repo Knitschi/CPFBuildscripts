@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Usage: 0_Configure.py <config_name> [--inherits parent_config] [-D definition]...
+"""Usage: 1_Configure.py <config_name> [--inherits parent_config] [-D definition]...
 
     Running this script generates the file
 
@@ -46,6 +46,6 @@ if __name__ == "__main__":
     args = docopt(__doc__, version='0_Configure 1.0')
     automat = buildautomat.BuildAutomat()
     if not automat.configure(args):
-        print("Error: Script 0_Configure.py failed.")
+        print("Error: Script 1_Configure.py failed.")
         sys.exit(2)
 

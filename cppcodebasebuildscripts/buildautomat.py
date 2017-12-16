@@ -35,7 +35,7 @@ class BuildAutomat:
 
             # add basic options
             cmakeCommand = "cmake" \
-                        + " -DCPPCODEBASE_CONFIG=" + args[_configNameKey] \
+                        + " -DCCB_CONFIG=" + args[_configNameKey] \
                         + " -DPARENT_CONFIG=" + inheritOption \
 
             # Get the variable definitions
