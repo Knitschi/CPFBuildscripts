@@ -43,7 +43,7 @@ from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts.docopt import docop
 from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts import buildautomat
 
 if __name__ == "__main__":
-    args = docopt(__doc__, version='0_Configure 1.0')
+    args = docopt(__doc__, version='1_Configure 1.0')
     automat = buildautomat.BuildAutomat()
     if not automat.configure(args):
         print("Error: Script 1_Configure.py failed.")
