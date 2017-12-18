@@ -84,7 +84,7 @@ class TestBuildAutomat(unittest.TestCase):
             "--inherits" : "MyProjectConfig",
             "-D" : [
                 'CMAKE_GENERATOR=Visual Studio 14 2015 Amd64',
-                'CPPCODEBASE_TEST_FILES_DIR=C:/Temp bla/Tests'] # note that argument values do not
+                'CCB_TEST_FILES_DIR=C:/Temp bla/Tests'] # note that argument values do not
                                                                 # have quotes when they come in
                                                                 # from docopt
             }
