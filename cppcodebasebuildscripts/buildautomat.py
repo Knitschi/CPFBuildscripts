@@ -4,6 +4,8 @@ This module provides the BuildAutomat class which implements the functionality
 of the primary build scripts.
 """
 
+import time
+
 from . import filelocations
 from . import miscosaccess
 from . import filesystemaccess
@@ -62,6 +64,8 @@ class BuildAutomat:
         Runs the cmake to create the makefiles.
         """
         try:
+            start_time = time.perf_counter()
+
             config_name = self._get_config_name_from_arguments(args)
             if config_name:
                 self._clear_makefile_dir(config_name)
@@ -71,6 +75,9 @@ class BuildAutomat:
                 if self._has_existing_cache_file(config_name):
                     self._call_cmake_for_existing_cache_file(config_name)
                     return True
+
+            end_time = time.perf_counter()
+            print("Generating the make-files took {0} seconds".format(end_time - start_time))
 
             self._call_cmake_with_full_arguments(config_name)
             return True
@@ -84,6 +91,7 @@ class BuildAutomat:
         Uses CMake to make the code-base using the given make configuration.
         """
         try:
+            start_time = time.perf_counter()
 
             config_name = self._get_config_name_from_arguments(args)
             if not config_name:
@@ -94,6 +102,9 @@ class BuildAutomat:
                 return False
 
             cmake_build_command = self._get_cmake_build_command(config_name, args)
+
+            end_time = time.perf_counter()
+            print("The build took {0} seconds".format(end_time - start_time))
 
             return self.m_os_access.execute_command(cmake_build_command)
 
