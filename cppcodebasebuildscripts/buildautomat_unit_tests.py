@@ -282,7 +282,8 @@ class TestBuildAutomat(unittest.TestCase):
             "CMAKE_INSTALL_PREFIX:PATH=C:/Program Files/CppCodeBase\n"
         )
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : cmake_inspection_call_stdout}]]
-        argv = {"<config_name>" : "MyConfig", "--target" : "myTarget", "--config" : "Debug"}
+        cpu_count = 1
+        argv = {"<config_name>" : "MyConfig", "--target" : "myTarget", "--config" : "Debug", "--cpus" : str(cpu_count)}
 
         # execute
         self.assertTrue(self.sut.make(argv))
@@ -294,7 +295,7 @@ class TestBuildAutomat(unittest.TestCase):
             ' --target myTarget'
             ' --config Debug'
             ' --clean-first'
-            ' -- /maxcpucount:' + str(self.cpu_count)
+            ' -- /maxcpucount:' + str(cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_cmake_call)
 
@@ -308,7 +309,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('C_Config'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/B_Config/CMakeCache.txt", "content")
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Visual Studio 14 2015 Win64\n"}]]
-        argv = {"<config_name>" : None, "--target" : None, "--config" : None}
+        argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--cpus" : None}
 
         # execute
         self.assertTrue(self.sut.make(argv))
@@ -327,7 +328,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/MyConfig/CMakeCache.txt", "content")
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Unix Makefiles\n"}]]
-        argv = {"<config_name>" : None, "--target" : None, "--config" : None}
+        argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--cpus" : None}
 
         # execute
         self.assertTrue(self.sut.make(argv))

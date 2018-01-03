@@ -5,6 +5,7 @@ of the primary build scripts.
 """
 
 import time
+import datetime
 
 from . import filelocations
 from . import miscosaccess
@@ -13,6 +14,7 @@ from . import filesystemaccess
 _CONFIG_NAME_KEY = '<config_name>'
 _TARGET_KEY = '--target'
 _CONFIG_KEY = '--config'
+_CPUS_KEY = '--cpus'
 
 class BuildAutomat:
     """
@@ -67,19 +69,19 @@ class BuildAutomat:
             start_time = time.perf_counter()
 
             config_name = self._get_config_name_from_arguments(args)
-            if config_name:
+            if config_name: # do a fresh generate
                 self._clear_makefile_dir(config_name)
+                self._call_cmake_with_full_arguments(config_name)
 
-            else: # check for an existing configuration file
+            else: # do the incremental generate if possible
                 config_name = self._get_existing_config_name()
                 if self._has_existing_cache_file(config_name):
                     self._call_cmake_for_existing_cache_file(config_name)
-                    return True
+                else:
+                    self._call_cmake_with_full_arguments(config_name)
 
-            end_time = time.perf_counter()
-            print("Generating the make-files took {0} seconds".format(end_time - start_time))
-
-            self._call_cmake_with_full_arguments(config_name)
+            _print_elapsed_time(start_time, "Generating the make-files took")
+            
             return True
 
         except BaseException as exception:
@@ -102,11 +104,11 @@ class BuildAutomat:
                 return False
 
             cmake_build_command = self._get_cmake_build_command(config_name, args)
+            return_value = self.m_os_access.execute_command(cmake_build_command)
 
-            end_time = time.perf_counter()
-            print("The build took {0} seconds".format(end_time - start_time))
+            _print_elapsed_time(start_time, "The build took")
 
-            return self.m_os_access.execute_command(cmake_build_command)
+            return return_value
 
         except BaseException as exception:
             return self._print_exception(exception)
@@ -250,7 +252,7 @@ class BuildAutomat:
         is_incremental_build = args[_CONFIG_NAME_KEY] is None
         target = args[_TARGET_KEY]
         config = args[_CONFIG_KEY]
-        multicore_option = self._get_build_tool_multicore_option(config_name)
+        multicore_option = self._get_build_tool_multicore_option(config_name, args[_CPUS_KEY])
 
         # now assemble the command
         makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
@@ -271,14 +273,15 @@ class BuildAutomat:
         return command
 
 
-    def _get_build_tool_multicore_option(self, config_name):
+    def _get_build_tool_multicore_option(self, config_name, nr_cpus):
         """
         In order to get the right option we need to introspect the used CMAKE_GENERATOR
         of the configuration.
         """
         generator = self._get_cmake_generator_of_config(config_name)
 
-        nr_cpus = str(self.m_os_access.cpu_count())
+        if not nr_cpus:
+            nr_cpus = str(self.m_os_access.cpu_count())
 
         if 'Visual Studio' in generator:
             return "/maxcpucount:"+ nr_cpus
@@ -313,3 +316,11 @@ def _get_option_from_args(args, possible_options):
         if option_arg in args and args[option_arg] is True:
             return option
     return None
+
+
+def _print_elapsed_time(start_time, prefix_string):
+    """Prints the time that has elapsed between the given start time and the call of this function."""
+    end_time = time.perf_counter()
+    time_rounded_seconds = round(end_time - start_time)
+    time_string = str(datetime.timedelta(seconds=time_rounded_seconds))
+    print("{0} {1} h:m:s".format(prefix_string, time_string))

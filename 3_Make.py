@@ -1,6 +1,6 @@
 ﻿#!/usr/bin/python3
 """Usage:
-    3_Make.py [<config_name>] [--target <target>] [--config <config>] [--help]
+    3_Make.py [<config_name>] [--target <target>] [--config <config>] [--cpus <nr_cpus>] [--help]
 
     This script builds the given target in the given configuration.
 
@@ -15,6 +15,8 @@ Options:
     --target <target>       Specify the build target.
     --config <config>       Specify the configuration for multi-config build systems.
                             This is usually Debug or Release.
+    --cpus <nr_cpus>        The number of cpu cores that should be used during the build.
+                            If no number is given, the number of available physical cores plus the number of hyper threaded cores will be used.
 """
 
 import sys
