@@ -340,3 +340,22 @@ class TestBuildAutomat(unittest.TestCase):
             ' -- -j' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)
+
+
+    def test_make_uses_the_correct_multicpuoption_for_ninja(self):
+        # setup
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/MyConfig/CMakeCache.txt", "content")
+        self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Ninja\n"}]]
+        argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--cpus" : None}
+
+        # execute
+        self.assertTrue(self.sut.make(argv))
+        
+        #verify
+        expected_cmake_call = (
+            'cmake'
+            ' --build "/MyCppCodeBase/Generated/MyConfig"'
+            ' -- -j' + str(self.cpu_count)
+            )
+        self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)

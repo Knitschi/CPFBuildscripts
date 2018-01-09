@@ -287,6 +287,8 @@ class BuildAutomat:
             return "/maxcpucount:"+ nr_cpus
         elif generator == 'Unix Makefiles':
             return '-j' + nr_cpus
+        elif generator == 'Ninja':
+            return '-j' + nr_cpus
         else:
             return None
 

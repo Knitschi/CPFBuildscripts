@@ -1,5 +1,6 @@
 
 include(ccbAddPackage)
+include(ccbAddRunTestsTarget)
 
 # add a custom target that does nothing, so the files appear in the Visual Studio solution explorer.
 
@@ -24,9 +25,16 @@ set( sources
     cppcodebasebuildscripts/miscosaccess.py
 )
 
+# add a target that only holds the files and does nothing
 add_custom_target( 
     ${PACKAGE_NAME}
     SOURCES ${sources}
 )
 set_property( TARGET ${PACKAGE_NAME} PROPERTY FOLDER ${PACKAGE_NAME} )
+
+
+# Add a runAllTests target to run the unit tests.
+ccbAddRunPython3TestTarget( ${PACKAGE_NAME} run_tests.py ${sources} )
+
+
 
