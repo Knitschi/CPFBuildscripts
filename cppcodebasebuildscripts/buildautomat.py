@@ -325,4 +325,4 @@ def _print_elapsed_time(start_time, prefix_string):
     end_time = time.perf_counter()
     time_rounded_seconds = round(end_time - start_time)
     time_string = str(datetime.timedelta(seconds=time_rounded_seconds))
-    print("{0} {1} h:m:s".format(prefix_string, time_string))
+    print("{0} {1} h:m:s or {2} s".format(prefix_string, time_string, time_rounded_seconds))
