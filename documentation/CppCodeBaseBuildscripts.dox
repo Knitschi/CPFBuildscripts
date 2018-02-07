@@ -1,0 +1,8 @@
+/**
+\defgroup CPFBuildscriptsGroup CppCodeBaseBuildscripts
+
+\brief A package that provides python scripts for simplifying CMake calls of CppCodeBaseCMake projects.
+
+Bli bla blub
+
+*/

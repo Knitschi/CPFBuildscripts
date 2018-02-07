@@ -1,5 +1,4 @@
-# CppCodeBaseBuildscripts
+# Welcome to CppCodeBaseBuildscripts
 
-Python scripts to simplify cmake command line calls for a CppCodeBaseCMake project.
+Please note that this project is in an early, quick-moving stage. Interfaces are not kept stable.
 
-This project is work in progress and currently not documented.
