@@ -21,18 +21,18 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="cppcodebasebuildscripts\buildautomat.py" />
-    <Compile Include="cppcodebasebuildscripts\buildautomat_unit_tests.py" />
-    <Compile Include="cppcodebasebuildscripts\docopt.py" />
-    <Compile Include="cppcodebasebuildscripts\filelocations.py" />
-    <Compile Include="cppcodebasebuildscripts\filesystemaccess.py" />
-    <Compile Include="cppcodebasebuildscripts\filesystemaccess_unit_tests.py" />
-    <Compile Include="cppcodebasebuildscripts\miscosaccess.py" />
-    <Compile Include="cppcodebasebuildscripts\__init__.py" />
+    <Compile Include="python\buildautomat.py" />
+    <Compile Include="python\buildautomat_unit_tests.py" />
+    <Compile Include="python\docopt.py" />
+    <Compile Include="python\filelocations.py" />
+    <Compile Include="python\filesystemaccess.py" />
+    <Compile Include="python\filesystemaccess_unit_tests.py" />
+    <Compile Include="python\miscosaccess.py" />
+    <Compile Include="python\__init__.py" />
     <Compile Include="run_tests.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="cppcodebasebuildscripts" />
+    <Folder Include="python" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />

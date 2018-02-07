@@ -1,0 +1,8 @@
+/**
+\defgroup CPFBuildscriptsGroup CPFBuildscripts
+
+\brief A package that provides python scripts for simplifying CMake calls of CPFCMake projects.
+
+Bli bla blub
+
+*/

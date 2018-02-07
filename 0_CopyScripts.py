@@ -6,7 +6,7 @@ This script is used to copy the build scripts
 2_Generate.py
 3_Make.py
 
-into the root directory of a CppCodeBase project.
+into the root directory of a CMakeProjectFramework repository.
 """
 
 import shutil

@@ -21,8 +21,8 @@ class BuildAutomat:
     The entry point for running the various steps of the make-pipeline.
     """
     def __init__(self):
-        # Get information about where is what in the codebase
-        self.m_file_locations = filelocations.FileLocations(filelocations.get_cppcodebase_root_dir_from_script_dir())
+        # Get information about where is what in the cpf
+        self.m_file_locations = filelocations.FileLocations(filelocations.get_cpf_root_dir_from_script_dir())
         # Object to operate on the file-system
         self.m_fs_access = filesystemaccess.FileSystemAccess()
         # Object to access other os functionality
@@ -40,7 +40,7 @@ class BuildAutomat:
 
             # add basic options
             cmake_command = "cmake" \
-                        + " -DCCB_CONFIG=" + args[_CONFIG_NAME_KEY] \
+                        + " -DCPF_CONFIG=" + args[_CONFIG_NAME_KEY] \
                         + " -DPARENT_CONFIG=" + inherit_option \
 
             # Get the variable definitions
@@ -52,7 +52,7 @@ class BuildAutomat:
                 cmake_command += " " + " ".join(cmake_arg_definitions)
 
             cmake_command += " -P " + _quotes(
-                self.m_file_locations.get_full_path_cppcodebase_root() +
+                self.m_file_locations.get_full_path_cpf_root() +
                 self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
             return self.m_os_access.execute_command(cmake_command)

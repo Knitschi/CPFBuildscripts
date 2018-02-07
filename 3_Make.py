@@ -20,8 +20,8 @@ Options:
 """
 
 import sys
-from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts.docopt import docopt
-import Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts.buildautomat as buildautomat
+from Sources.CPFBuildscripts.python.docopt import docopt
+import Sources.CPFBuildscripts.python.buildautomat as buildautomat
 
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='3_Make 1.0')

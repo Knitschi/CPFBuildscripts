@@ -6,7 +6,7 @@
     Configuration/<config_name>.config.cmake
 
     which contains developer specific CMake variables that are required to generate the
-    make-files for the CppCodeBase. Among others these include the used CMake generator
+    make-files for the CMakeProjectFramework. Among others these include the used CMake generator
     and the compilation toolchain. When doing the configure step, <config_name> can be
     freely chosen. The 2_Generate.py and 3_Make.py step will later take the chosen
     <config_name> to create makefiles or make the created configuration.
@@ -21,8 +21,8 @@ Options:
                             be the base-name of a <base-name>.config.cmake file.
                             The file must be located in one of the following locations.
                             <cppcodebase-root>/Configuration
-                            <cppcodebase-root>/Sources
-                            <cppcodebase-root>/Sources/CppCodeBase/DefaultConfigurations
+                            <cppcodebase-root>/Sources/BuildConfigurations
+                            <cppcodebase-root>/Sources/CPFCMake/DefaultConfigurations
 
 
 -D definition               This option can be given to set cmake variables
@@ -32,8 +32,8 @@ Options:
 """
 
 import sys
-from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts.docopt import docopt
-from Sources.CppCodeBaseBuildscripts.cppcodebasebuildscripts import buildautomat
+from Sources.CPFBuildscripts.python.docopt import docopt
+from Sources.CPFBuildscripts.python import buildautomat
 
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='1_Configure 1.0')

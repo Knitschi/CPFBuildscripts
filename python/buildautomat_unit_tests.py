@@ -22,7 +22,7 @@ class TestBuildAutomat(unittest.TestCase):
     def setUp(self):
 
         # define some constants
-        self.codebase_root = "/MyCppCodeBase"
+        self.cpf_root = "/MyCPFProject"
         self.path_to_common_tools = "C:\\path\\to\\CommonTools\\"
         self.cpu_count = 4
 
@@ -31,7 +31,7 @@ class TestBuildAutomat(unittest.TestCase):
 
         # Replace the FileSystemAccess with a fake implementation that contains
         # The basic folder and file structure.
-        self.locations = filelocations.FileLocations(self.codebase_root)
+        self.locations = filelocations.FileLocations(self.cpf_root)
         self.sut.m_file_locations = self.locations
         self.sut.m_fs_access = filesystemaccess.FakeFileSystemAccess()
         # self.sut.m_fs_access.mkdirs(self.locations.getFullPathInfrastructureFolder())
@@ -67,7 +67,7 @@ class TestBuildAutomat(unittest.TestCase):
     def _get_fake_os_access(self, operating_system):
         return miscosaccess.FakeMiscOsAccess(
             self.sut.m_fs_access,
-            self.codebase_root,
+            self.cpf_root,
             {},
             operating_system,
             self.cpu_count)
@@ -84,7 +84,7 @@ class TestBuildAutomat(unittest.TestCase):
             "--inherits" : "MyProjectConfig",
             "-D" : [
                 'CMAKE_GENERATOR=Visual Studio 14 2015 Amd64',
-                'CCB_TEST_FILES_DIR=C:/Temp bla/Tests'] # note that argument values do not
+                'CPF_TEST_FILES_DIR=C:/Temp bla/Tests'] # note that argument values do not
                                                                 # have quotes when they come in
                                                                 # from docopt
             }
@@ -95,11 +95,11 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DCCB_CONFIG=MyConfig '
+            '-DCPF_CONFIG=MyConfig '
             '-DPARENT_CONFIG=MyProjectConfig '
             '-DCMAKE_GENERATOR="Visual Studio 14 2015 Amd64" '
-            '-DCCB_TEST_FILES_DIR="C:/Temp bla/Tests" '
-            '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
+            '-DCPF_TEST_FILES_DIR="C:/Temp bla/Tests" '
+            '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
@@ -121,9 +121,9 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DCCB_CONFIG=MyConfig '
+            '-DCPF_CONFIG=MyConfig '
             '-DPARENT_CONFIG=Windows '
-            '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
+            '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
@@ -145,9 +145,9 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DCCB_CONFIG=MyConfig '
+            '-DCPF_CONFIG=MyConfig '
             '-DPARENT_CONFIG=Linux '
-            '-P "/MyCppCodeBase/Sources/CppCodeBaseCMake/Scripts/createConfigFile.cmake"'
+            '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
@@ -178,10 +178,10 @@ class TestBuildAutomat(unittest.TestCase):
         # cmake is called with correct arguments
         expected_command = (
             'cmake '
-            '-H"/MyCppCodeBase/Sources" '
-            '-B"/MyCppCodeBase/Generated/MyConfig" '
-            '-C"/MyCppCodeBase/Configuration/MyConfig.config.cmake" '
-            '--graphviz="/MyCppCodeBase/Generated/MyConfig/CppCodeBaseDependencies.dot"'
+            '-H"/MyCPFProject/Sources" '
+            '-B"/MyCPFProject/Generated/MyConfig" '
+            '-C"/MyCPFProject/Configuration/MyConfig.config.cmake" '
+            '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
             )
 
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
@@ -201,10 +201,10 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-H"/MyCppCodeBase/Sources" '
-            '-B"/MyCppCodeBase/Generated/MyConfig" '
-            '-C"/MyCppCodeBase/Configuration/MyConfig.config.cmake" '
-            '--graphviz="/MyCppCodeBase/Generated/MyConfig/CppCodeBaseDependencies.dot"'
+            '-H"/MyCPFProject/Sources" '
+            '-B"/MyCPFProject/Generated/MyConfig" '
+            '-C"/MyCPFProject/Configuration/MyConfig.config.cmake" '
+            '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
@@ -223,8 +223,8 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '"/MyCppCodeBase/Generated/MyConfig" '
-            '--graphviz="/MyCppCodeBase/Generated/MyConfig/CppCodeBaseDependencies.dot"'
+            '"/MyCPFProject/Generated/MyConfig" '
+            '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
@@ -259,7 +259,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertTrue("cmake" not in self.sut.m_os_access.console_output)
 
 
-    @patch('cppcodebasebuildscripts.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
+    @patch('python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
     def test_generate_make_files_returns_false_if_cmake_call_fails(self, mock_executeCommandAndPrintResult):
         # setup
         argv = {"<config_name>" : "MyConfig"}
@@ -279,7 +279,7 @@ class TestBuildAutomat(unittest.TestCase):
         cmake_inspection_call_stdout = (
             "CMAKE_C_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/Tools/../../VC/bin/x86_amd64/cl.exe\n"
             "CMAKE_GENERATOR:STRING=Visual Studio 14 2015 Win64\n"
-            "CMAKE_INSTALL_PREFIX:PATH=C:/Program Files/CppCodeBase\n"
+            "CMAKE_INSTALL_PREFIX:PATH=C:/Program Files/CMakeProjectFramework\n"
         )
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : cmake_inspection_call_stdout}]]
         cpu_count = 1
@@ -291,7 +291,7 @@ class TestBuildAutomat(unittest.TestCase):
         #verify
         expected_cmake_call = (
             'cmake'
-            ' --build "/MyCppCodeBase/Generated/MyConfig"'
+            ' --build "/MyCPFProject/Generated/MyConfig"'
             ' --target myTarget'
             ' --config Debug'
             ' --clean-first'
@@ -317,7 +317,7 @@ class TestBuildAutomat(unittest.TestCase):
         #verify
         expected_cmake_call = (
             'cmake'
-            ' --build "/MyCppCodeBase/Generated/B_Config"'
+            ' --build "/MyCPFProject/Generated/B_Config"'
             ' -- /maxcpucount:' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_cmake_call)
@@ -336,7 +336,7 @@ class TestBuildAutomat(unittest.TestCase):
         #verify
         expected_cmake_call = (
             'cmake'
-            ' --build "/MyCppCodeBase/Generated/MyConfig"'
+            ' --build "/MyCPFProject/Generated/MyConfig"'
             ' -- -j' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)
@@ -355,7 +355,7 @@ class TestBuildAutomat(unittest.TestCase):
         #verify
         expected_cmake_call = (
             'cmake'
-            ' --build "/MyCppCodeBase/Generated/MyConfig"'
+            ' --build "/MyCPFProject/Generated/MyConfig"'
             ' -- -j' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)
