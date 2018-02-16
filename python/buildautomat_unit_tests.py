@@ -259,7 +259,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertTrue("cmake" not in self.sut.m_os_access.console_output)
 
 
-    @patch('python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
+    @patch('Sources.CPFBuildscripts.python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
     def test_generate_make_files_returns_false_if_cmake_call_fails(self, mock_executeCommandAndPrintResult):
         # setup
         argv = {"<config_name>" : "MyConfig"}
