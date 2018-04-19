@@ -1,5 +1,5 @@
 /**
-\defgroup CPFBuildscriptsGroup CPFBuildscripts
+\page CPFBuildscripts
 
 \brief A package that provides python scripts for simplifying the CMake calls of CPF projects.
 
@@ -9,4 +9,11 @@ the project, the calls can require quite a list of arguments. The python scripts
 CPFBuildscripts package use the knowledge about the structure of the CPF project to reduce the length
 of those commands. It is therefore highly recommended to use the CPFBuildscripts package in combination
 with the CPFCMake package.
+
+<HR>
+
+## Index ##
+
+
+
 */
