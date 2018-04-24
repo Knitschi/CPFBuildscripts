@@ -26,15 +26,10 @@ set( sources
 )
 
 # add a target that only holds the files and does nothing
-add_custom_target( 
-    ${PACKAGE_NAME}
-    SOURCES ${sources}
-)
-set_property( TARGET ${PACKAGE_NAME} PROPERTY FOLDER ${PACKAGE_NAME} )
-
+cpfAddFilePackage(${PACKAGE_NAME} "${sources}")
 
 # Add a runAllTests target to run the unit tests.
-cpfAddRunPython3TestTarget( ${PACKAGE_NAME} run_tests.py ${sources} )
+cpfAddRunPython3TestTarget( ${PACKAGE_NAME} run_tests.py "" "${sources}" "" )
 
 
 

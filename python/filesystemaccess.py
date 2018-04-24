@@ -2,6 +2,8 @@
 
 import os
 import shutil
+import stat
+import platform
 
 
 class FileSystemAccess:
@@ -40,8 +42,20 @@ class FileSystemAccess:
         return os.listdir(path)
 
     def rmtree(self, path):
-        """Removes a directory and all of its content."""
-        shutil.rmtree(path)
+        """
+        Removes a directory and all of its content.
+        We use our own implementation because
+        shutil.rmtree() fails when files are write
+        protected on windows.
+        """
+        for root, dirs, files in os.walk(path, topdown=False):
+            for name in files:
+                filename = os.path.join(root, name)
+                os.chmod(filename, stat.S_IWUSR)
+                os.remove(filename)
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(path)
 
     def copyfile(self, path_from, path_to):
         """Copies a file."""
