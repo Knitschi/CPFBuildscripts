@@ -7,6 +7,7 @@ import multiprocessing
 import locale
 
 from . import filesystemaccess
+from enum import Enum
 
 ############################################################################
 class CalledProcessError(Exception):
@@ -25,6 +26,16 @@ class CalledProcessError(Exception):
 
 
 ############################################################################
+class OutputMode(Enum):
+    """
+    Defines how the output of a subprocess calls is propagated to the
+    output of the calling process.
+    """
+    ALWAYS = 0      # Print everything the subprocess prints
+    ON_ERROR = 1    # Only print the output of the subprocess if it fails.
+    NEVER = 2       # Never print the output of the subprocess.
+
+############################################################################
 class MiscOsAccess:
     """
     Wraps some miscellaneous functions that access the functionality of the operating system.
@@ -38,7 +49,7 @@ class MiscOsAccess:
         in parallel.
         """
         try:
-            self.execute_command_output(command, cwd=cwd, print_output=True, print_command=True)
+            self.execute_command_output(command, cwd=cwd, print_output=OutputMode.ALWAYS, print_command=True)
             return True
 
         except CalledProcessError as err:
@@ -46,7 +57,7 @@ class MiscOsAccess:
             return False
 
 
-    def execute_command_output(self, command, cwd=None, print_output=True, print_command=False):
+    def execute_command_output(self, command, cwd=None, print_output=OutputMode.ALWAYS, print_command=False):
         """
         Executes the given command and returns a list with [ stdoutlineslist , stderrlineslist].
         The function will print output as soon as it is created when setting the print_output option.
@@ -74,6 +85,7 @@ class MiscOsAccess:
         # We need to pipe raw bite-streams here instead of using the encoding argument
         # because of the troubles that are described below.
         with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, cwd=working_dir, shell=True ) as p:
+        #with subprocess.Popen(command, bufsize=1, cwd=working_dir, shell=True ) as p:
             # poll output as it comes in
             for line in p.stdout:
                 # Decoding with utf8 will throw exceptions if ignore is not set.
@@ -81,20 +93,20 @@ class MiscOsAccess:
                 # This was the only codec I could find that worked when doing nested calls of the function
                 # by calling another python script that uses it.
                 lineString = line.decode('utf-8', errors="ignore").rstrip()
-                if print_output:
+                if print_output == OutputMode.ALWAYS:
                     print(lineString)
                 stdoutstrings.append(lineString)
 
             for line in p.stderr:
                 lineString = line.decode('utf-8', errors="ignore").rstrip()
-                if print_output:
+                if print_output == OutputMode.ALWAYS:
                     print(lineString)
                 stderrstrings.append(lineString)
 
 
         if p.returncode != 0:
             # print output in any case if an error occurred
-            if not print_output:
+            if print_output == OutputMode.ON_ERROR:
                 print('\n'.join(stdoutstrings))
                 print('\n'.join(stderrstrings))
 
