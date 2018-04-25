@@ -8,7 +8,23 @@ import locale
 
 from . import filesystemaccess
 
+############################################################################
+class CalledProcessError(Exception):
+    """
+    Holds information about a failed subprocess call.
+    """
+    def __init__(self, returncode, cmd, stdout, stderr, cwd):
+        self.returncode = returncode
+        self.cmd = cmd
+        self.stdout = stdout
+        self.stderr = stderr
+        self.cwd = cwd
 
+    def __str__(self):
+        return 'Error! Failed to execute command:\n{0}\nin directory:\n{1}\nreturncode: {2}'.format(self.cmd, self.cwd, str(self.returncode))
+
+
+############################################################################
 class MiscOsAccess:
     """
     Wraps some miscellaneous functions that access the functionality of the operating system.
@@ -25,8 +41,8 @@ class MiscOsAccess:
             self.execute_command_output(command, cwd=cwd, print_output=True, print_command=True)
             return True
 
-        except Exception as exception:
-            print(str(exception))
+        except CalledProcessError as err:
+            print(str(err))
             return False
 
 
@@ -37,7 +53,7 @@ class MiscOsAccess:
         Note that when your command runs a python script, you have to add the python -u option to make
         sure the output is displayed immediately.
 
-        The function throws if the command returns with a non-zero return code.
+        The function throws a CalledProcessError when the command fails.
 
         The function currently only uses utf-8 encoded output strings. Other variants caused errors
         when calling python scripts that also call this function.
@@ -75,13 +91,14 @@ class MiscOsAccess:
                     print(lineString)
                 stderrstrings.append(lineString)
 
+
         if p.returncode != 0:
             # print output in any case if an error occurred
             if not print_output:
                 print('\n'.join(stdoutstrings))
                 print('\n'.join(stderrstrings))
 
-            raise Exception('Error! Failed to execute command:\n{0}\nin directory:\n{1}\nreturncode: {2}'.format(command,working_dir,p.returncode))
+            raise CalledProcessError(p.returncode, command, '\n'.join(stdoutstrings), '\n'.join(stderrstrings), working_dir)
 
         return [stdoutstrings, stderrstrings]
 
