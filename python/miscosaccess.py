@@ -42,14 +42,28 @@ class MiscOsAccess:
         The function currently only uses utf-8 encoded output strings. Other variants caused errors
         when calling python scripts that also call this function.
         """
-        printed_command = self._get_printed_command(command, cwd=cwd)
+        if cwd:
+            working_dir = str(cwd)
+        else:
+            working_dir = os.getcwd()
+
+        printed_command = self._get_printed_command(command, cwd=working_dir)
         if print_command:
             print(printed_command)
 
         stdoutstrings = []
         stderrstrings = []
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, cwd=cwd ) as p:
+        # The shell=True argument makes sure we can call commands in one string on linux
+        # The pipes are required to enable us polling output while it is produced.
+        # We need to pipe raw bite-streams here instead of using the encoding argument
+        # because of the troubles that are described below.
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, cwd=working_dir, shell=True ) as p:
+            # poll output as it comes in
             for line in p.stdout:
+                # Decoding with utf8 will throw exceptions if ignore is not set.
+                # Forcing this will remove characters like german umlaute from the output.
+                # This was the only codec I could find that worked when doing nested calls of the function
+                # by calling another python script that uses it.
                 lineString = line.decode('utf-8', errors="ignore").rstrip()
                 if print_output:
                     print(lineString)
@@ -67,10 +81,6 @@ class MiscOsAccess:
                 print('\n'.join(stdoutstrings))
                 print('\n'.join(stderrstrings))
 
-            if cwd:
-                working_dir = cwd
-            else:
-                working_dir = os.getcwd()
             raise Exception('Error! Failed to execute command:\n{0}\nin directory:\n{1}\nreturncode: {2}'.format(command,working_dir,p.returncode))
 
         return [stdoutstrings, stderrstrings]

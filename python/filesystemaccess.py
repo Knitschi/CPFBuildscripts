@@ -14,7 +14,7 @@ class FileSystemAccess:
 
     def exists(self, path):
         """Returns true if the path exists."""
-        return os.path.exists(path)
+        return os.path.exists(str(path))
 
     def isfile(self, path):
         """Returns true if the path leads to a file."""
@@ -48,14 +48,15 @@ class FileSystemAccess:
         shutil.rmtree() fails when files are write
         protected on windows.
         """
-        for root, dirs, files in os.walk(path, topdown=False):
+
+        for root, dirs, files in os.walk(str(path), topdown=False):
             for name in files:
                 filename = os.path.join(root, name)
                 os.chmod(filename, stat.S_IWUSR)
                 os.remove(filename)
             for name in dirs:
                 os.rmdir(os.path.join(root, name))
-        os.rmdir(path)
+        os.rmdir(str(path))
 
     def copyfile(self, path_from, path_to):
         """Copies a file."""
