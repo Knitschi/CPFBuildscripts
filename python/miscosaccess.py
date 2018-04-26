@@ -14,11 +14,10 @@ class CalledProcessError(Exception):
     """
     Holds information about a failed subprocess call.
     """
-    def __init__(self, returncode, cmd, stdout, stderr, cwd):
+    def __init__(self, returncode, cmd, stdout, cwd):
         self.returncode = returncode
         self.cmd = cmd
         self.stdout = stdout
-        self.stderr = stderr
         self.cwd = cwd
 
     def __str__(self):
@@ -59,7 +58,7 @@ class MiscOsAccess:
 
     def execute_command_output(self, command, cwd=None, print_output=OutputMode.ALWAYS, print_command=False):
         """
-        Executes the given command and returns a list with [ stdoutlineslist , stderrlineslist].
+        Executes the given command and returns a list with that contains the output lines of the process.
         The function will print output as soon as it is created when setting the print_output option.
         Note that when your command runs a python script, you have to add the python -u option to make
         sure the output is displayed immediately.
@@ -79,12 +78,11 @@ class MiscOsAccess:
             print(printed_command)
 
         stdoutstrings = []
-        stderrstrings = []
         # The shell=True argument makes sure we can call commands in one string on linux
         # The pipes are required to enable us polling output while it is produced.
         # We need to pipe raw bite-streams here instead of using the encoding argument
         # because of the troubles that are described below.
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, cwd=working_dir, shell=True ) as p:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1, cwd=working_dir, shell=True ) as p:
         #with subprocess.Popen(command, bufsize=1, cwd=working_dir, shell=True ) as p:
             # poll output as it comes in
             for line in p.stdout:
@@ -97,22 +95,15 @@ class MiscOsAccess:
                     print(lineString)
                 stdoutstrings.append(lineString)
 
-            for line in p.stderr:
-                lineString = line.decode('utf-8', errors="ignore").rstrip()
-                if print_output == OutputMode.ALWAYS:
-                    print(lineString)
-                stderrstrings.append(lineString)
-
 
         if p.returncode != 0:
             # print output in any case if an error occurred
             if print_output == OutputMode.ON_ERROR:
                 print('\n'.join(stdoutstrings))
-                print('\n'.join(stderrstrings))
 
-            raise CalledProcessError(p.returncode, command, '\n'.join(stdoutstrings), '\n'.join(stderrstrings), working_dir)
+            raise CalledProcessError(p.returncode, command, '\n'.join(stdoutstrings), working_dir)
 
-        return [stdoutstrings, stderrstrings]
+        return stdoutstrings
 
 
     def execute_commands_in_parallel(self, commands, cwd=None, printOutput=True):
