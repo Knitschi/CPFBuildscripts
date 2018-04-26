@@ -48,15 +48,21 @@ class FileSystemAccess:
         shutil.rmtree() fails when files are write
         protected on windows.
         """
+        system = platform.system()
+        if system == 'Windows':
+            for root, dirs, files in os.walk(str(path), topdown=False):
+                for name in files:
+                    filename = os.path.join(root, name)
+                    os.chmod(filename, stat.S_IWUSR)
+                    os.remove(filename)
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+            os.rmdir(str(path))
+        elif system == 'Linux':
+            shutil.rmtree(str(path))
+        else:
+            raise Exception('Unknown OS')
 
-        for root, dirs, files in os.walk(str(path), topdown=False):
-            for name in files:
-                filename = os.path.join(root, name)
-                os.chmod(filename, stat.S_IWUSR)
-                os.remove(filename)
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
-        os.rmdir(str(path))
 
     def copyfile(self, path_from, path_to):
         """Copies a file."""
