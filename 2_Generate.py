@@ -29,3 +29,5 @@ if __name__ == "__main__":
     if not _AUTOMAT.generate_make_files(_ARGS):
         print("Error: Script 2_Generate.py failed.")
         sys.exit(2)
+    else:
+        sys.exit(0)

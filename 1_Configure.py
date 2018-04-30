@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""Usage: 1_Configure.py <config_name> [--inherits parent_config] [-D definition]...
+"""Usage: 
+    1_Configure.py <config_name> --inherits <parent_config> [-D definition]...
 
     Running this script generates the file
 
@@ -16,7 +17,7 @@
 
 Options:
 
---inherits parent_config    This option can be given to specify another configuration from
+--inherits <parent_config>  This option must be given to specify another configuration from
                             which variable definitions are inherited. For now the value must
                             be the base-name of a <base-name>.config.cmake file.
                             The file must be located in one of the following locations.
@@ -40,4 +41,6 @@ if __name__ == "__main__":
     _AUTOMAT = buildautomat.BuildAutomat()
     if not _AUTOMAT.configure(_ARGS):
         print("Error: Script 1_Configure.py failed.")
-        sys.exit(2)
+        sys.exit(1)
+    else:
+        sys.exit(0)

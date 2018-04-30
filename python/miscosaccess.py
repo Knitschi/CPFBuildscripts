@@ -95,7 +95,7 @@ class MiscOsAccess:
                     print(lineString)
                 stdoutstrings.append(lineString)
 
-
+        
         if p.returncode != 0:
             # print output in any case if an error occurred
             if print_output == OutputMode.ON_ERROR:

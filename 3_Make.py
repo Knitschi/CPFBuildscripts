@@ -29,3 +29,5 @@ if __name__ == "__main__":
     if not _AUTOMAT.make(_ARGS):
         print("Error: Script 3_Make.py failed.")
         sys.exit(2)
+    else:
+        sys.exit(0)
