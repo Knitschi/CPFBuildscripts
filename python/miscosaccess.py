@@ -56,7 +56,7 @@ class MiscOsAccess:
             return False
 
 
-    def execute_command_output(self, command, cwd=None, print_output=OutputMode.ALWAYS, print_command=False):
+    def execute_command_output(self, command, cwd=None, print_output=OutputMode.ALWAYS, print_command=False, env=None):
         """
         Executes the given command and returns a list with that contains the output lines of the process.
         The function will print output as soon as it is created when setting the print_output option.
@@ -82,7 +82,7 @@ class MiscOsAccess:
         # The pipes are required to enable us polling output while it is produced.
         # We need to pipe raw bite-streams here instead of using the encoding argument
         # because of the troubles that are described below.
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1, cwd=working_dir, shell=True ) as p:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1, cwd=working_dir, shell=True, env=env) as p:
         #with subprocess.Popen(command, bufsize=1, cwd=working_dir, shell=True ) as p:
             # poll output as it comes in
             for line in p.stdout:
