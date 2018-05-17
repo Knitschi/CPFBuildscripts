@@ -69,6 +69,12 @@ class FileSystemAccess:
         shutil.copyfile(path_from, path_to)
 
 
+    def touch_file(self, file_path):
+        """Updates the time stamp of a file and creates it if it does not exists."""
+        with open(file_path, 'a'):
+            os.utime(file_path, None)
+
+
 class FakeFileSystemAccess():
     """
     An implementation of FileSystemAccess that does not access the actual file-system.
