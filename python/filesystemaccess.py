@@ -71,8 +71,9 @@ class FileSystemAccess:
 
     def touch_file(self, file_path):
         """Updates the time stamp of a file and creates it if it does not exists."""
-        with open(file_path, 'a'):
-            os.utime(file_path, None)
+        file_string = str(file_path)
+        with open(file_string, 'a'):
+            os.utime(file_string, None)
 
 
 class FakeFileSystemAccess():
