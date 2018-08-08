@@ -241,7 +241,7 @@ class FakeFileSystemFileNode(FakeFileSystemNode):
 
 def _get_path_as_list(path):
     # make sure path has unix format
-    path = path.replace("\\", "/")
+    path = str(path).replace("\\", "/")
 
     # remove leading slashes at the end and beginning
     if path.startswith("/"):

@@ -52,7 +52,7 @@ class BuildAutomat:
                 cmake_command += " " + " ".join(cmake_arg_definitions)
 
             cmake_command += " -P " + _quotes(
-                self.m_file_locations.get_full_path_cpf_root() +
+                self.m_file_locations.get_full_path_cpf_root() /
                 self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
             return self.m_os_access.execute_command(cmake_command)
@@ -151,7 +151,7 @@ class BuildAutomat:
         if config_name: # config option was given
             config_file = self.m_file_locations.get_full_path_config_file(config_name)
             if not self.m_fs_access.exists(config_file):
-                raise Exception('error: There is no configuration file "' + config_file + '". Did you forget to run 1_Configure.py?')
+                raise Exception('error: There is no configuration file "' + str(config_file) + '". Did you forget to run 1_Configure.py?')
             return config_name
         return None
 
@@ -176,7 +176,7 @@ class BuildAutomat:
         if self.m_fs_access.isdir(self.m_file_locations.get_full_path_configuration_folder()):
             entries = self.m_fs_access.listdir(self.m_file_locations.get_full_path_configuration_folder())
             for entry in entries:
-                full_entry_path = self.m_file_locations.get_full_path_configuration_folder() + "/" + entry
+                full_entry_path = self.m_file_locations.get_full_path_configuration_folder() / entry
                 config_file_ending = self.m_file_locations.get_config_file_ending()
                 length_ending = len(config_file_ending)
                 ending = entry[-length_ending:]
@@ -194,7 +194,7 @@ class BuildAutomat:
 
 
     def _has_existing_cache_file(self, config_name):
-        cache_file_path = self.m_file_locations.get_full_path_generated_folder() + "/" + config_name + "/CMakeCache.txt"
+        cache_file_path = self.m_file_locations.get_full_path_generated_folder() / config_name / "CMakeCache.txt"
         return self.m_fs_access.isfile(cache_file_path)
 
 
@@ -225,7 +225,7 @@ class BuildAutomat:
             # set the generator (makefileType)
             " -C" + _quotes(full_path_config_file) +
             # Generate the .dot file that is used to document the target dependencies.
-            " --graphviz="+ _quotes(makefile_directory  + "/" + self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
+            " --graphviz="+ _quotes(makefile_directory  / self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
             )
 
         if not self.m_os_access.execute_command(command):
@@ -239,7 +239,7 @@ class BuildAutomat:
         makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
         full_command = (
             "cmake " + _quotes(makefile_directory) +
-            " --graphviz="+ _quotes(makefile_directory + "/" + self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
+            " --graphviz="+ _quotes(makefile_directory / self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
             )
 
         if not self.m_os_access.execute_command(full_command):
@@ -309,7 +309,7 @@ class BuildAutomat:
 
 ########### free functions #########################################################################
 def _quotes(string):
-    return '"' + string + '"'
+    return '"' + str(string) + '"'
 
 
 def _get_option_from_args(args, possible_options):

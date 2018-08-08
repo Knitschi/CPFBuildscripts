@@ -41,24 +41,24 @@ class TestBuildAutomat(unittest.TestCase):
         # add some source files
         # Module1
         self.sut.m_fs_access.addfile(
-            self.locations.get_full_path_source_folder() + "/Module1/bla.h",
+            self.locations.get_full_path_source_folder() / "Module1/bla.h",
             "content")
         self.sut.m_fs_access.addfile(
-            self.locations.get_full_path_source_folder() + "/Module1/bla.cpp",
+            self.locations.get_full_path_source_folder() / "Module1/bla.cpp",
             "content")
         self.sut.m_fs_access.addfile(
-            self.locations.get_full_path_source_folder() + "/Module1/bla.ui",
+            self.locations.get_full_path_source_folder() / "Module1/bla.ui",
             "content")
         # Module2
         self.sut.m_fs_access.addfile(
-            self.locations.get_full_path_source_folder() + "/Module2/blub.h",
+            self.locations.get_full_path_source_folder() / "Module2/blub.h",
             "content")
         # Module3
         self.sut.m_fs_access.addfile(
-            self.locations.get_full_path_source_folder() + "/Module3/blar.cpp",
+            self.locations.get_full_path_source_folder() / "Module3/blar.cpp",
             "content")
         # cmake
-        self.sut.m_fs_access.mkdirs(self.locations.get_full_path_source_folder() + "/cmake")
+        self.sut.m_fs_access.mkdirs(self.locations.get_full_path_source_folder() / "cmake")
 
         # use the windows os access as default
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
@@ -161,7 +161,7 @@ class TestBuildAutomat(unittest.TestCase):
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
-        path_in_make_file_folder = self.locations.get_full_path_generated_folder() + "/MyConfig/blib"
+        path_in_make_file_folder = self.locations.get_full_path_generated_folder() / "MyConfig/blib"
         # add an extra directory in the makefile directory so we can check that
         # the folder was cleared
         self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
@@ -214,7 +214,7 @@ class TestBuildAutomat(unittest.TestCase):
         # Setup
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/MyConfig/CMakeCache.txt", "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
         argv = {"<config_name>" : None}
 
         # execute
@@ -274,7 +274,7 @@ class TestBuildAutomat(unittest.TestCase):
         # setup
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_makefile_folder('MyConfig') + '/CMakeCache.txt', "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_makefile_folder('MyConfig') / 'CMakeCache.txt', "content")
 
         cmake_inspection_call_stdout = (
             "CMAKE_C_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/Tools/../../VC/bin/x86_amd64/cl.exe\n"
@@ -307,7 +307,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('A_Config'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('B_Config'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('C_Config'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/B_Config/CMakeCache.txt", "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "B_Config/CMakeCache.txt", "content")
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Visual Studio 14 2015 Win64\n"}]]
         argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--cpus" : None}
 
@@ -326,7 +326,7 @@ class TestBuildAutomat(unittest.TestCase):
     def test_make_uses_the_correct_multicpuoption_for_unix_makefiles(self):
         # setup
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/MyConfig/CMakeCache.txt", "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Unix Makefiles\n"}]]
         argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--cpus" : None}
 
@@ -345,7 +345,7 @@ class TestBuildAutomat(unittest.TestCase):
     def test_make_uses_the_correct_multicpuoption_for_ninja(self):
         # setup
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() + "/MyConfig/CMakeCache.txt", "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
         self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Ninja\n"}]]
         argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--cpus" : None}
 
