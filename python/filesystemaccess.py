@@ -69,6 +69,37 @@ class FileSystemAccess:
         shutil.copyfile(path_from, path_to)
 
 
+    def copytree(self, src, dst, symlinks = False, ignore = None):
+        """ 
+        Copies the content for directory src into directory dst.
+        The function overwrites existing files.
+        """
+        if not os.path.exists(dst):
+            os.makedirs(dst)
+            shutil.copystat(src, dst)
+        lst = os.listdir(src)
+        if ignore:
+            excl = ignore(src, lst)
+            lst = [x for x in lst if x not in excl]
+        for item in lst:
+            s = os.path.join(src, item)
+            d = os.path.join(dst, item)
+            if symlinks and os.path.islink(s):
+                if os.path.lexists(d):
+                    os.remove(d)
+                os.symlink(os.readlink(s), d)
+                try:
+                    st = os.lstat(s)
+                    mode = stat.S_IMODE(st.st_mode)
+                    os.lchmod(d, mode)
+                except:
+                    pass # lchmod not available
+            elif os.path.isdir(s):
+                self.copytree(s, d, symlinks, ignore)
+            else:
+                shutil.copy2(s, d)
+
+
     def touch_file(self, file_path):
         """Updates the time stamp of a file and creates it if it does not exists."""
         file_string = str(file_path)
