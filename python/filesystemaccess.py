@@ -18,28 +18,28 @@ class FileSystemAccess:
 
     def isfile(self, path):
         """Returns true if the path leads to a file."""
-        return os.path.isfile(path)
+        return os.path.isfile(str(path))
 
     def isdir(self, path):
         """Returns true if the path leads to a directory."""
-        return os.path.isdir(path)
+        return os.path.isdir(str(path))
 
     def mkdir(self, path):
         """Creates a directory. The parent directory must exist."""
-        return os.mkdir(path)
+        return os.mkdir(str(path))
 
     def mkdirs(self, path):
         """
         Creates multiple directories. This will not throw an error if a directory already exists.
         """
-        return os.makedirs(path, 0o777, True)
+        return os.makedirs(str(path), 0o777, True)
 
     def listdir(self, path):
         """
         Returns all entries in the directory given by path except . and .. .
         Throws when path does not exist?
         """
-        return os.listdir(path)
+        return os.listdir(str(path))
 
     def rmtree(self, path):
         """

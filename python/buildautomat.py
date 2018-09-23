@@ -65,27 +65,24 @@ class BuildAutomat:
         """
         Runs the cmake to create the makefiles.
         """
-        try:
-            start_time = time.perf_counter()
+        start_time = time.perf_counter()
 
-            config_name = self._get_config_name_from_arguments(args)
-            if config_name: # do a fresh generate
-                self._clear_makefile_dir(config_name)
+        config_name = self._get_config_name_from_arguments(args)
+        if config_name: # do a fresh generate
+            self._clear_makefile_dir(config_name)
+            self._call_cmake_with_full_arguments(config_name)
+
+        else: # do the incremental generate if possible
+            config_name = self._get_existing_config_name()
+            if self._has_existing_cache_file(config_name):
+                self._call_cmake_for_existing_cache_file(config_name)
+            else:
                 self._call_cmake_with_full_arguments(config_name)
 
-            else: # do the incremental generate if possible
-                config_name = self._get_existing_config_name()
-                if self._has_existing_cache_file(config_name):
-                    self._call_cmake_for_existing_cache_file(config_name)
-                else:
-                    self._call_cmake_with_full_arguments(config_name)
+        _print_elapsed_time(start_time, "Generating the make-files took")
+        
+        return True
 
-            _print_elapsed_time(start_time, "Generating the make-files took")
-            
-            return True
-
-        except BaseException as exception:
-            return self._print_exception(exception)
 
 
     def make(self, args):
