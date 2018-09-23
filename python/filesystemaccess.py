@@ -66,7 +66,7 @@ class FileSystemAccess:
 
     def copyfile(self, path_from, path_to):
         """Copies a file."""
-        shutil.copyfile(path_from, path_to)
+        shutil.copyfile(str(path_from), str(path_to))
 
 
     def copytree(self, src, dst, symlinks = False, ignore = None):
