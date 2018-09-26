@@ -74,6 +74,9 @@ class FileSystemAccess:
         Copies the content for directory src into directory dst.
         The function overwrites existing files.
         """
+        dst = str(dst)
+        src = str(src)
+
         if not os.path.exists(dst):
             os.makedirs(dst)
             shutil.copystat(src, dst)
