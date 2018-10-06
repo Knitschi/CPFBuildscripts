@@ -29,7 +29,7 @@ set( sources
 cpfAddFilePackage(${PACKAGE_NAME} "${sources}")
 
 # Add a runAllTests target to run the unit tests.
-cpfAddRunPython3TestTarget( ${PACKAGE_NAME} run_tests.py "" "${sources}" "" )
+cpfAddRunPython3TestTarget( ${PACKAGE_NAME} run_tests.py "" "${sources}" "" "" )
 
 
 
