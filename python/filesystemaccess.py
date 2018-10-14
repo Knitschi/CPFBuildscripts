@@ -17,8 +17,14 @@ class FileSystemAccess:
         return os.path.exists(str(path))
 
     def isfile(self, path):
-        """Returns true if the path leads to a file."""
-        return os.path.isfile(str(path))
+        """
+        Returns true if the path leads to a file.
+        Unlike os.path.isfile() this will not return
+        true if path is the path to a symlink that points to a file.
+        """
+        isFile = os.path.isfile(str(path))
+        isLink = os.path.islink(str(path))
+        return isFile and not isLink
 
     def isdir(self, path):
         """Returns true if the path leads to a directory."""
