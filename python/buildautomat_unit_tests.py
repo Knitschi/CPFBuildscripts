@@ -95,7 +95,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DCPF_CONFIG=MyConfig '
+            '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=MyProjectConfig '
             '-DCMAKE_GENERATOR="Visual Studio 14 2015 Amd64" '
             '-DCPF_TEST_FILES_DIR="C:/Temp bla/Tests" '
@@ -121,7 +121,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DCPF_CONFIG=MyConfig '
+            '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=Windows '
             '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )
@@ -145,7 +145,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DCPF_CONFIG=MyConfig '
+            '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=Linux '
             '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )

@@ -40,7 +40,7 @@ class BuildAutomat:
 
             # add basic options
             cmake_command = "cmake" \
-                        + " -DCPF_CONFIG=" + args[_CONFIG_NAME_KEY] \
+                        + " -DDERIVED_CONFIG=" + args[_CONFIG_NAME_KEY] \
                         + " -DPARENT_CONFIG=" + inherit_option \
 
             # Get the variable definitions
