@@ -3,12 +3,7 @@ include(cpfInitPackageProject)
 include(cpfAddFilePackage)
 include(cpfAddRunTestsTarget)
 
-# add a custom target that does nothing, so the files appear in the Visual Studio solution explorer.
-
-set( PACKAGE_NAMESPACE CPFBS )
-cpfInitPackageProject(
-	${PACKAGE_NAMESPACE}
-)
+cpfInitPackageProject()
 
 set( sources 
     run_tests.py
