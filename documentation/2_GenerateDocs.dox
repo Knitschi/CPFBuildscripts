@@ -1,0 +1,7 @@
+/**
+
+\page scriptGenerate 2_Generate.py
+
+This script runs the CMake generate step that creates the native "make files" for you chosen generator.
+
+*/

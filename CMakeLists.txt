@@ -18,6 +18,11 @@ set( sources
     python/filesystemaccess.py
     python/filesystemaccess_unit_tests.py
     python/miscosaccess.py
+    documentation/CPFBuildscripts.dox
+    documentation/0_CopyScriptsDocs.dox
+    documentation/1_ConfigureDocs.dox
+    documentation/2_GenerateDocs.dox
+    documentation/3_MakeDocs.dox
 )
 
 # add a target that only holds the files and does nothing

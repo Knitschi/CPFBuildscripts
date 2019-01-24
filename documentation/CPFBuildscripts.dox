@@ -1,4 +1,5 @@
 /**
+
 \page CPFBuildscripts
 \section CPFBuildscripts
 
@@ -14,6 +15,9 @@ with the CPFCMake package.
 
 ## Index ##
 
-
+- \subpage scriptCopyFiles
+- \subpage scriptConfigure
+- \subpage scriptGenerate
+- \subpage scriptMake
 
 */
