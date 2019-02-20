@@ -68,17 +68,22 @@ class BuildAutomat:
         try:
             start_time = time.perf_counter()
 
+            # Use the explicit config name or try to find an existing one.
             config_name = self._get_config_name_from_arguments(args)
-            if config_name: # do a fresh generate
-                self._clear_makefile_dir(config_name)
-                self._call_cmake_with_full_arguments(config_name)
+            if not config_name:
+                config_name = self._get_first_existing_config_name()
 
-            else: # do the incremental generate if possible
-                config_name = self._get_existing_config_name()
-                if self._has_existing_cache_file(config_name):
-                    self._call_cmake_for_existing_cache_file(config_name)
-                else:
-                    self._call_cmake_with_full_arguments(config_name)
+            # Clean the build-tree if demanded
+            hasCleanOption = ("-c" in args) or ("--clean" in args)
+            if hasCleanOption:
+                self._clear_makefile_dir(config_name)
+
+            if self._has_existing_cache_file(config_name):
+                # Do the incremental generate if possible
+                self._call_cmake_for_existing_cache_file(config_name)
+            else:
+                # Do the full generate if no cache file is available.
+                self._call_cmake_with_full_arguments(config_name)
 
             _print_elapsed_time(start_time, "Generating the make-files took")
             
@@ -98,9 +103,9 @@ class BuildAutomat:
 
             config_name = self._get_config_name_from_arguments(args)
             if not config_name:
-                config_name = self._get_existing_config_name()
+                config_name = self._get_first_config_that_has_cache_file()
 
-            if not self._has_existing_cache_file(config_name):
+            if not config_name:
                 self.m_os_access.print_console("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
                 return False
 
@@ -157,7 +162,7 @@ class BuildAutomat:
         return None
 
 
-    def _get_existing_config_name(self):
+    def _get_first_existing_config_name(self):
         """
         The function will return the first config for which a config file and a CMakeCache.txt file exists.
         If there is no config for which a CMakeCache.txt exists, it will return the first config in the
@@ -166,11 +171,7 @@ class BuildAutomat:
         config_file_configs = self._get_existing_config_file_configs()
         if not config_file_configs:
             raise Exception('error: There is no existing configuration file. Run 1_Configure.py to create one.')
-        config_with_cache_file = self._get_first_config_that_has_cache_file(config_file_configs)
-        if config_with_cache_file:
-            return config_with_cache_file
-        else:
-            return config_file_configs[0]
+        return config_file_configs[0]
 
     def _get_existing_config_file_configs(self):
         configs = []
@@ -187,8 +188,9 @@ class BuildAutomat:
         return configs
 
 
-    def _get_first_config_that_has_cache_file(self, configs):
-        for config in configs:
+    def _get_first_config_that_has_cache_file(self):
+        config_file_configs = self._get_existing_config_file_configs()
+        for config in config_file_configs:
             if self._has_existing_cache_file(config):
                 return config
         return None
