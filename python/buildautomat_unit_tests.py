@@ -156,23 +156,24 @@ class TestBuildAutomat(unittest.TestCase):
 
 ####################################################################################################
 
-    def test_generate_make_files_executes_the_correct_calls_when_config_option_is_given(self):
+    def test_generate_make_files_test_clean_generate(self):
 
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
-        path_in_make_file_folder = self.locations.get_full_path_generated_folder() / "MyConfig/blib"
-        # add an extra directory in the makefile directory so we can check that
-        # the folder was cleared
-        self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        argv = {"<config_name>" : "MyConfig"}
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
+        # add an extra directory in the makefile directory so we can check that the folder was cleared
+        path_in_make_file_folder = self.locations.get_full_path_generated_folder() / "MyConfig/blib"
+        self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
+
+        argv = {"<config_name>" : "MyConfig", "--clean" : None}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
 
         # verify
-        # makefile folder is cleared when the <config_name> argument is given
+        # makefile folder was cleared
         self.assertFalse(self.sut.m_fs_access.isdir(path_in_make_file_folder))
 
         # cmake is called with correct arguments
@@ -187,13 +188,43 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
 
-    def test_generate_make_files_executes_the_correct_calls_when_no_config_option_is_given_and_only_a_config_file_exists(self):
+    def test_generate_make_files_executes_incremental_generate_when_a_configfile_and_a_cachefile_exist(self):
+
+        # setup
+        self.maxDiff = None
+        self.sut.m_os_access = self._get_fake_os_access(_LINUX)
+
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
+        # add an extra directory in the makefile directory so we can check that the folder was not cleared
+        path_in_make_file_folder = self.locations.get_full_path_generated_folder() / "MyConfig/blib"
+        self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
+
+        argv = {"<config_name>" : "MyConfig"}
+
+        # execute
+        self.assertTrue(self.sut.generate_make_files(argv))
+
+        # verify
+        # makefile folder was not cleared
+        self.assertTrue(self.sut.m_fs_access.isdir(path_in_make_file_folder))
+
+        # cmake is called with correct arguments
+        expected_command = (
+            'cmake '
+            '"/MyCPFProject/Generated/MyConfig" '
+            '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
+            )
+
+        self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
+
+
+    def test_generate_make_files_executes_fresh_generate_when_no_cache_file_exists(self):
 
         # Setup
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        argv = {"<config_name>" : None}
-
+        argv = {"<config_name>" : "MyConfig"}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
@@ -209,12 +240,13 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
 
-    def test_generate_make_files_executes_the_correct_calls_when_no_config_option_is_given_and_a_config_file_and_a_cachefile_exists(self):
+    def test_generate_make_files_picks_the_first_available_config_if_none_is_given_and_executes_an_incremental_generate_if_cache_exists(self):
 
         # Setup
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig1'), "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig2'), "content")  
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig1/CMakeCache.txt", "content")
         argv = {"<config_name>" : None}
 
         # execute
@@ -223,8 +255,31 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '"/MyCPFProject/Generated/MyConfig" '
-            '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
+            '"/MyCPFProject/Generated/MyConfig1" '
+            '--graphviz="/MyCPFProject/Generated/MyConfig1/CPFDependencies.dot"'
+            )
+        self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
+
+
+    def test_generate_make_files_picks_the_first_available_config_if_none_is_given_and_executes_a_fresh_generate_if_no_cache_exists(self):
+
+        # Setup
+        self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig1'), "content")
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig2'), "content")  
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig2/CMakeCache.txt", "content")
+        argv = {"<config_name>" : None}
+
+        # execute
+        self.assertTrue(self.sut.generate_make_files(argv))
+
+        # verify
+        expected_command = (
+            'cmake '
+            '-H"/MyCPFProject/Sources" '
+            '-B"/MyCPFProject/Generated/MyConfig1" '
+            '-C"/MyCPFProject/Configuration/MyConfig1.config.cmake" '
+            '--graphviz="/MyCPFProject/Generated/MyConfig1/CPFDependencies.dot"'
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
