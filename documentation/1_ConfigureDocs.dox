@@ -4,7 +4,7 @@
 
 This script instantiates a configuration file in the \c Configuration directory.
 
-\section Command Line Interface
+\section CLI1_Configure Command Line Interface
 
 \verbatim
 Usage: 

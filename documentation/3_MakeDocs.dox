@@ -4,7 +4,7 @@
 
 This script builds the targets in a CPF project.
 
-\section Command Line Interface
+\section CLI3_Make Command Line Interface
 
 \verbatim
 Usage:

@@ -4,7 +4,7 @@
 
 This script runs the CMake generate step that creates the native "make files" for you chosen generator.
 
-\section Command Line Interface
+\section CLI2_Generate Command Line Interface
 
 \verbatim
 Usage:
