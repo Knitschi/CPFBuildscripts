@@ -167,7 +167,7 @@ class TestBuildAutomat(unittest.TestCase):
         path_in_make_file_folder = self.locations.get_full_path_generated_folder() / "MyConfig/blib"
         self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
 
-        argv = {"<config_name>" : "MyConfig", "--clean" : None}
+        argv = {"<config_name>" : "MyConfig", "--clean" : True}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
@@ -187,15 +187,6 @@ class TestBuildAutomat(unittest.TestCase):
 
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
-        # Also check the abbreviated clean argument
-        self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
-        argv = {"<config_name>" : "MyConfig", "-c" : None}
-        self.assertTrue(self.sut.generate_make_files(argv))
-
-        # Verify
-        # makefile folder was cleared
-        self.assertFalse(self.sut.m_fs_access.isdir(path_in_make_file_folder))
-
 
     def test_generate_make_files_executes_incremental_generate_when_a_configfile_and_a_cachefile_exist(self):
 
@@ -209,7 +200,7 @@ class TestBuildAutomat(unittest.TestCase):
         path_in_make_file_folder = self.locations.get_full_path_generated_folder() / "MyConfig/blib"
         self.sut.m_fs_access.mkdirs(path_in_make_file_folder)
 
-        argv = {"<config_name>" : "MyConfig"}
+        argv = {"<config_name>" : "MyConfig", "--clean" : False}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
@@ -233,7 +224,7 @@ class TestBuildAutomat(unittest.TestCase):
         # Setup
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        argv = {"<config_name>" : "MyConfig"}
+        argv = {"<config_name>" : "MyConfig", "--clean" : False}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
@@ -256,7 +247,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig1'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig2'), "content")  
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig1/CMakeCache.txt", "content")
-        argv = {"<config_name>" : None}
+        argv = {"<config_name>" : None, "--clean" : False}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
@@ -277,7 +268,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig1'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig2'), "content")  
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig2/CMakeCache.txt", "content")
-        argv = {"<config_name>" : None}
+        argv = {"<config_name>" : None, "--clean" : False}
 
         # execute
         self.assertTrue(self.sut.generate_make_files(argv))
@@ -298,7 +289,7 @@ class TestBuildAutomat(unittest.TestCase):
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
-        argv = {"<config_name>" : "MyConfig"}
+        argv = {"<config_name>" : "MyConfig", "--clean" : False}
 
         # execute
         self.assertFalse(self.sut.generate_make_files(argv))
@@ -311,7 +302,7 @@ class TestBuildAutomat(unittest.TestCase):
     def test_generate_make_files_returns_false_when_no_config_option_is_given_and_no_config_file_exists(self):
         # setup
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
-        argv = {"<config_name>" : None}
+        argv = {"<config_name>" : None, "--clean" : False}
 
         # execute
         self.assertFalse(self.sut.generate_make_files(argv))
@@ -326,7 +317,7 @@ class TestBuildAutomat(unittest.TestCase):
     @patch('Sources.CPFBuildscripts.python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
     def test_generate_make_files_returns_false_if_cmake_call_fails(self, mock_executeCommandAndPrintResult):
         # setup
-        argv = {"<config_name>" : "MyConfig"}
+        argv = {"<config_name>" : "MyConfig", "--clean" : False}
 
         # execute
         self.assertFalse(self.sut.generate_make_files(argv))

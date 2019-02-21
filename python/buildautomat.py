@@ -74,8 +74,7 @@ class BuildAutomat:
                 config_name = self._get_first_existing_config_name()
 
             # Clean the build-tree if demanded
-            hasCleanOption = ("-c" in args) or ("--clean" in args)
-            if hasCleanOption:
+            if args['--clean']:
                 self._clear_makefile_dir(config_name)
 
             if self._has_existing_cache_file(config_name):
