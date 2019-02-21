@@ -14,6 +14,7 @@ from . import filesystemaccess
 _CONFIG_NAME_KEY = '<config_name>'
 _TARGET_KEY = '--target'
 _CONFIG_KEY = '--config'
+_CLEAN_KEY = '--clean'
 _CPUS_KEY = '--cpus'
 
 class BuildAutomat:
@@ -74,7 +75,7 @@ class BuildAutomat:
                 config_name = self._get_first_existing_config_name()
 
             # Clean the build-tree if demanded
-            if args['--clean']:
+            if args[_CLEAN_KEY]:
                 self._clear_makefile_dir(config_name)
 
             if self._has_existing_cache_file(config_name):
@@ -251,7 +252,7 @@ class BuildAutomat:
     def _get_cmake_build_command(self, config_name, args):
 
         # get command argument values
-        is_incremental_build = args[_CONFIG_NAME_KEY] is None
+        is_clean_build = args[_CLEAN_KEY]
         target = args[_TARGET_KEY]
         config = args[_CONFIG_KEY]
         multicore_option = self._get_build_tool_multicore_option(config_name, args[_CPUS_KEY])
@@ -266,7 +267,7 @@ class BuildAutomat:
         if config:
             command += ' --config ' + config
 
-        if not is_incremental_build:
+        if is_clean_build:
             command += ' --clean-first'
 
         if multicore_option:
