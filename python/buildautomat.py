@@ -255,7 +255,9 @@ class BuildAutomat:
         is_clean_build = args[_CLEAN_KEY]
         target = args[_TARGET_KEY]
         config = args[_CONFIG_KEY]
-        multicore_option = self._get_build_tool_multicore_option(config_name, args[_CPUS_KEY])
+        nr_cpus = args[_CPUS_KEY]
+        if not nr_cpus:
+            nr_cpus = str(self.m_os_access.cpu_count())
 
         # now assemble the command
         makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
@@ -270,44 +272,10 @@ class BuildAutomat:
         if is_clean_build:
             command += ' --clean-first'
 
-        if multicore_option:
-            command +=' -- ' + multicore_option
+        command +=' --parallel ' + nr_cpus
 
         return command
 
-
-    def _get_build_tool_multicore_option(self, config_name, nr_cpus):
-        """
-        In order to get the right option we need to introspect the used CMAKE_GENERATOR
-        of the configuration.
-        """
-        generator = self._get_cmake_generator_of_config(config_name)
-
-        if not nr_cpus:
-            nr_cpus = str(self.m_os_access.cpu_count())
-
-        if 'Visual Studio' in generator:
-            return "/maxcpucount:"+ nr_cpus
-        elif generator == 'Unix Makefiles':
-            return '-j' + nr_cpus
-        elif generator == 'Ninja':
-            return '-j' + nr_cpus
-        else:
-            return None
-
-
-    def _get_cmake_generator_of_config(self, config_name):
-        # get the name of the used generator
-        makefile_directory = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
-        cmake_introspection_command = []
-        cmake_introspection_command.append('cmake -L -B' + _quotes(makefile_directory))
-        output = self.m_os_access.execute_commands_in_parallel(cmake_introspection_command, None, False)[0]['stdout']
-        lines = output.split('\n')
-        for line in lines:
-            if 'CMAKE_GENERATOR:STRING=' in line:
-                generator_name = line[23:]
-                return generator_name
-        return None
 
 
 ########### free functions #########################################################################

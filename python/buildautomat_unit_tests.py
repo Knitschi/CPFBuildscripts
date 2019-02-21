@@ -350,7 +350,7 @@ class TestBuildAutomat(unittest.TestCase):
             ' --target myTarget'
             ' --config Debug'
             ' --clean-first'
-            ' -- /maxcpucount:' + str(cpu_count)
+            ' --parallel ' + str(cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_cmake_call)
 
@@ -373,7 +373,7 @@ class TestBuildAutomat(unittest.TestCase):
         expected_cmake_call = (
             'cmake'
             ' --build "/MyCPFProject/Generated/B_Config"'
-            ' -- /maxcpucount:' + str(self.cpu_count)
+            ' --parallel ' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_cmake_call)
 
@@ -392,7 +392,7 @@ class TestBuildAutomat(unittest.TestCase):
         expected_cmake_call = (
             'cmake'
             ' --build "/MyCPFProject/Generated/MyConfig"'
-            ' -- -j' + str(self.cpu_count)
+            ' --parallel ' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)
 
@@ -411,6 +411,6 @@ class TestBuildAutomat(unittest.TestCase):
         expected_cmake_call = (
             'cmake'
             ' --build "/MyCPFProject/Generated/MyConfig"'
-            ' -- -j' + str(self.cpu_count)
+            ' --parallel ' + str(self.cpu_count)
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)
