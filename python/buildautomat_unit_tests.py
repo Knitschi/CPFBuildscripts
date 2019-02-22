@@ -286,22 +286,30 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
 
 
-    def test_generate_make_files_returns_false_when_config_option_is_given_but_config_file_does_not_exist(self):
+    def mock_config(self):
+        """
+        Creates a file in the configuration directory.
+        """
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file("MyConfig"), "content")
+        return True
+
+
+    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure', return_value=True)
+    def test_generate_make_files_runs_configure_step_if_config_does_not_exist(self, mock_configure):
 
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
         argv = {"<config_name>" : "MyConfig", "--clean" : False}
+        mock_configure.side_effect = self.mock_config()
 
         # execute
-        self.assertFalse(self.sut.generate_make_files(argv))
-
-        # verify
-        # make sure an error message was issued
-        self.assertTrue("error:" in self.sut.m_os_access.console_output)
+        self.assertTrue(self.sut.generate_make_files(argv))
 
 
-    def test_generate_make_files_returns_false_when_no_config_option_is_given_and_no_config_file_exists(self):
+    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure', return_value=False)
+    def test_generate_make_files_returns_false_when_no_config_option_is_given_and_no_config_file_exists(self, mock_configure):
+       
         # setup
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
         argv = {"<config_name>" : None, "--clean" : False}
@@ -311,9 +319,7 @@ class TestBuildAutomat(unittest.TestCase):
 
         # verify
         # make sure an error message was issued
-        self.assertTrue("error:" in self.sut.m_os_access.console_output)
-        # make sure cmake was never executed
-        self.assertTrue("cmake" not in self.sut.m_os_access.console_output)
+        self.assertTrue("Error:" in self.sut.m_os_access.console_output)
 
 
     @patch('Sources.CPFBuildscripts.python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)

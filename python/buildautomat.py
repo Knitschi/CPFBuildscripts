@@ -66,6 +66,8 @@ class BuildAutomat:
                 self.m_file_locations.get_full_path_cpf_root() /
                 self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
+            
+
             return self.m_os_access.execute_command(cmake_command)
 
         except BaseException as exception:
@@ -80,8 +82,18 @@ class BuildAutomat:
             start_time = time.perf_counter()
 
             # Use the explicit config name or try to find an existing one.
-            config_name = self._get_config_name_from_arguments(args)
-            if not config_name:
+            config_name = args[_CONFIG_NAME_KEY]
+            if config_name:
+                if not self._developer_config_file_exists(config_name):
+                    configureArgs = {
+                        '<config_name>': config_name,
+                        '--inherits': None,
+                        '--list': False,
+                        '-D': []
+                    }
+                    if not self.configure(configureArgs):
+                        return self._print_exception('Error: The given configuration does not exist.')
+            else:
                 config_name = self._get_first_existing_config_name()
 
             # Clean the build-tree if demanded
@@ -96,12 +108,12 @@ class BuildAutomat:
                 self._call_cmake_with_full_arguments(config_name)
 
             _print_elapsed_time(start_time, "Generating the make-files took")
+            self.m_os_access.print_console('SUCCESS!')
             
             return True
 
         except BaseException as exception:
             return self._print_exception(exception)
-
 
 
     def make(self, args):
@@ -123,6 +135,9 @@ class BuildAutomat:
             return_value = self.m_os_access.execute_command(cmake_build_command)
 
             _print_elapsed_time(start_time, "The build took")
+
+            if return_value:
+                self.m_os_access.print_console('SUCCESS!')
 
             return return_value
 
@@ -167,7 +182,7 @@ class BuildAutomat:
         if config_name: # config option was given
             config_file = self.m_file_locations.get_full_path_config_file(config_name)
             if not self.m_fs_access.exists(config_file):
-                raise Exception('error: There is no configuration file "' + str(config_file) + '". Did you forget to run 1_Configure.py?')
+                raise Exception('Error: There is no configuration file "' + str(config_file) + '". Did you forget to run 1_Configure.py?')
             return config_name
         return None
 
@@ -180,7 +195,7 @@ class BuildAutomat:
         """
         config_file_configs = self._get_existing_config_file_configs()
         if not config_file_configs:
-            raise Exception('error: There is no existing configuration file. Run 1_Configure.py to create one.')
+            raise Exception('Error: You need to specify a <config_name> if there is not existing config file in <root>/Configuration.')
         return config_file_configs[0]
 
     def _get_existing_config_file_configs(self):
@@ -196,6 +211,10 @@ class BuildAutomat:
                     length = len(entry)
                     configs.append(entry[:(length - length_ending)])
         return configs
+
+    def _developer_config_file_exists(self, config):
+        config_file = self.m_file_locations.get_full_path_configuration_folder() / (config + self.m_file_locations.get_config_file_ending())
+        return self.m_fs_access.isfile(config_file)
 
 
     def _get_first_config_that_has_cache_file(self):

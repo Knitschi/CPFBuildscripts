@@ -151,7 +151,7 @@ class MiscOsAccess:
         else:
             working_dir = os.getcwd()
 
-        return '\n-------------- Execute command in directory ' + str(working_dir) + ':\n' + command + '\n'
+        return '\n-- Execute command in directory ' + str(working_dir) + ':\n' + command
 
 
     # allow mocking of print
