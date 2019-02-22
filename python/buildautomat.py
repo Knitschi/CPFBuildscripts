@@ -12,6 +12,8 @@ from . import miscosaccess
 from . import filesystemaccess
 
 _CONFIG_NAME_KEY = '<config_name>'
+_INHERITS_KEY = '--inherits'
+_LIST_KEY = '--list'
 _TARGET_KEY = '--target'
 _CONFIG_KEY = '--config'
 _CLEAN_KEY = '--clean'
@@ -37,20 +39,28 @@ class BuildAutomat:
         try:
             args = self._add_quotes_to_d_options(args)
 
-            inherit_option = self._get_inherit_option(args)
+            # Assemble the cmake command for calling the cmake script that does the work.
+            cmake_command = ""
+            if args[_LIST_KEY]:
+                cmake_command = "cmake -DLIST_CONFIGURATIONS=TRUE" \
 
-            # add basic options
-            cmake_command = "cmake" \
-                        + " -DDERIVED_CONFIG=" + args[_CONFIG_NAME_KEY] \
-                        + " -DPARENT_CONFIG=" + inherit_option \
+            else:
+                inherited_config = args[_INHERITS_KEY]
+                if not inherited_config:
+                    inherited_config = args[_CONFIG_NAME_KEY]
 
-            # Get the variable definitions
-            definitions = args["-D"]
-            if definitions:
-                cmake_arg_definitions = []
-                for definition in definitions:
-                    cmake_arg_definitions.append("-D" + definition)
-                cmake_command += " " + " ".join(cmake_arg_definitions)
+                # add basic options
+                cmake_command = "cmake" \
+                            + " -DDERIVED_CONFIG=" + args[_CONFIG_NAME_KEY] \
+                            + " -DPARENT_CONFIG=" + inherited_config \
+
+                # Get the variable definitions
+                definitions = args["-D"]
+                if definitions:
+                    cmake_arg_definitions = []
+                    for definition in definitions:
+                        cmake_arg_definitions.append("-D" + definition)
+                    cmake_command += " " + " ".join(cmake_arg_definitions)
 
             cmake_command += " -P " + _quotes(
                 self.m_file_locations.get_full_path_cpf_root() /

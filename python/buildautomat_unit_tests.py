@@ -75,7 +75,7 @@ class TestBuildAutomat(unittest.TestCase):
 
 ####################################################################################################
 
-    def test_configure_executes_the_correct_cmake_command(self):
+    def test_configure_with_major_arguments(self):
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
@@ -84,9 +84,10 @@ class TestBuildAutomat(unittest.TestCase):
             "--inherits" : "MyProjectConfig",
             "-D" : [
                 'CMAKE_GENERATOR=Visual Studio 14 2015 Amd64',
-                'CPF_TEST_FILES_DIR=C:/Temp bla/Tests'] # note that argument values do not
-                                                                # have quotes when they come in
-                                                                # from docopt
+                'CPF_TEST_FILES_DIR=C:/Temp bla/Tests'],    # Note that argument values do not
+                                                            # have quotes when they come in
+                                                            # from docopt
+            "--list" : False
             }
 
         # execute
@@ -105,14 +106,15 @@ class TestBuildAutomat(unittest.TestCase):
             self.sut.m_os_access.execute_command_arg[0][1],
             expected_command)
 
-    def test_configure_sets_correct_default_inheritance_on_windows(self):
+    def test_configure_short_call(self):
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
         args = {
             "<config_name>" : "MyConfig",
             "--inherits" : None,
-            "-D" : []
+            "-D" : [],
+            "--list" : False
             }
 
         # execute
@@ -122,21 +124,22 @@ class TestBuildAutomat(unittest.TestCase):
         expected_command = (
             'cmake '
             '-DDERIVED_CONFIG=MyConfig '
-            '-DPARENT_CONFIG=Windows '
+            '-DPARENT_CONFIG=MyConfig '
             '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
             expected_command)
 
-    def test_configure_sets_correct_default_inheritance_on_linux(self):
+    def test_configure_with_list_argument(self):
         # setup
         self.maxDiff = None
         self.sut.m_os_access = self._get_fake_os_access(_LINUX)
         args = {
-            "<config_name>" : "MyConfig",
+            "<config_name>" : None,
             "--inherits" : None,
-            "-D" : []
+            "-D" : [],
+            "--list" : True
             }
 
         # execute
@@ -145,8 +148,7 @@ class TestBuildAutomat(unittest.TestCase):
         # verify
         expected_command = (
             'cmake '
-            '-DDERIVED_CONFIG=MyConfig '
-            '-DPARENT_CONFIG=Linux '
+            '-DLIST_CONFIGURATIONS=TRUE '
             '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
