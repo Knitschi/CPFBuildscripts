@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Usage: 
-    1_Configure.py [<config_name>] [--inherits <parent_config>] [--list] [-D definition]...
+    1_Configure.py <config_name> [--inherits <parent_config>] [--list] [-D definition]...
 
     Running this script generates the file
 
