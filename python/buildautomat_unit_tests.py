@@ -338,13 +338,6 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_makefile_folder('MyConfig') / 'CMakeCache.txt', "content")
-
-        cmake_inspection_call_stdout = (
-            "CMAKE_C_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/Tools/../../VC/bin/x86_amd64/cl.exe\n"
-            "CMAKE_GENERATOR:STRING=Visual Studio 14 2015 Win64\n"
-            "CMAKE_INSTALL_PREFIX:PATH=C:/Program Files/CMakeProjectFramework\n"
-        )
-        self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : cmake_inspection_call_stdout}]]
         cpu_count = 1
         argv = {"<config_name>" : "MyConfig", "--target" : "myTarget", "--config" : "Debug", "--clean" : True, "--cpus" : str(cpu_count)}
 
@@ -371,7 +364,6 @@ class TestBuildAutomat(unittest.TestCase):
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('B_Config'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('C_Config'), "content")
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "B_Config/CMakeCache.txt", "content")
-        self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Visual Studio 14 2015 Win64\n"}]]
         argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--clean" : False, "--cpus" : None}
 
         # execute
@@ -386,39 +378,29 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_cmake_call)
 
 
-    def test_make_uses_the_correct_multicpuoption_for_unix_makefiles(self):
-        # setup
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
+    def mock_generate_make_files(self):
+        self.mock_generate_called = True
+        # create the cache file
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
-        self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Unix Makefiles\n"}]]
-        argv = {"<config_name>" : 'MyConfig', "--target" : None, "--config" : None, "--clean" : False, "--cpus" : None}
+        return True
+
+    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.generate_make_files', return_value=True)
+    def test_make_calls_generate_if_no_cache_file_exists(self, mock_generate_make_files):
+        # setup
+        #self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
+        #self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
+        self.mock_generate_called = False
+        argv = {
+            "<config_name>" : 'MyConfig',
+            "--target" : None,
+            "--config" : None,
+            "--clean" : False,
+            "--cpus" : None
+            }
+        mock_generate_make_files.side_effect = self.mock_generate_make_files()
 
         # execute
-        self.assertTrue(self.sut.make(argv))
-        
-        #verify
-        expected_cmake_call = (
-            'cmake'
-            ' --build "/MyCPFProject/Generated/MyConfig"'
-            ' --parallel ' + str(self.cpu_count)
-            )
-        self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)
+        self.assertTrue(self.mock_generate_called)
 
 
-    def test_make_uses_the_correct_multicpuoption_for_ninja(self):
-        # setup
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
-        self.sut.m_os_access.execute_commands_in_parallel_results = [[{'returncode':0, 'stdout' : "CMAKE_GENERATOR:STRING=Ninja\n"}]]
-        argv = {"<config_name>" : None, "--target" : None, "--config" : None, "--clean" : False, "--cpus" : None}
 
-        # execute
-        self.assertTrue(self.sut.make(argv))
-        
-        #verify
-        expected_cmake_call = (
-            'cmake'
-            ' --build "/MyCPFProject/Generated/MyConfig"'
-            ' --parallel ' + str(self.cpu_count)
-            )
-        self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1] , expected_cmake_call)

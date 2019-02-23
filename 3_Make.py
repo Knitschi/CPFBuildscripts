@@ -6,6 +6,9 @@
 
     If no <config_name> is given, the first configuration that already
     has a CMakeCache.txt file will be used.
+    If you specify a <config_name> and there is no CMakeCache.txt file
+    for that config, 3_Make.py call 2_Generate.py in order to try
+    to create one.
 
     If no <target> is given, the "ALL_BUILD" target will be build.
 

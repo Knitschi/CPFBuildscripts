@@ -86,9 +86,9 @@ class BuildAutomat:
             if config_name:
                 if not self._developer_config_file_exists(config_name):
                     configureArgs = {
-                        '<config_name>': config_name,
-                        '--inherits': None,
-                        '--list': False,
+                        _CONFIG_NAME_KEY: config_name,
+                        _INHERITS_KEY: None,
+                        _LIST_KEY: False,
                         '-D': []
                     }
                     if not self.configure(configureArgs):
@@ -123,19 +123,27 @@ class BuildAutomat:
         try:
             start_time = time.perf_counter()
 
-            config_name = self._get_config_name_from_arguments(args)
-            if not config_name:
+            config_name = args[_CONFIG_NAME_KEY]
+            if config_name:
+                # Try to generate a cache file if it does not yet exist.
+                if not self._has_existing_cache_file(config_name):
+                    generateArgs = {
+                        _CONFIG_NAME_KEY : config_name,
+                        _CLEAN_KEY : False
+                    }
+                    if not self.generate_make_files(generateArgs):
+                        return self._print_exception('Error: Could not find the CMakeCache.txt file for the given configuration.')
+            else:
                 config_name = self._get_first_config_that_has_cache_file()
+                if not config_name:
+                    return self._print_exception("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
 
-            if not config_name:
-                self.m_os_access.print_console("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
-                return False
-
+            # We not have a configuration with a cache file and can call cmake to build it.
             cmake_build_command = self._get_cmake_build_command(config_name, args)
             return_value = self.m_os_access.execute_command(cmake_build_command)
 
+            # Print some final output.
             _print_elapsed_time(start_time, "The build took")
-
             if return_value:
                 self.m_os_access.print_console('SUCCESS!')
 
@@ -176,17 +184,6 @@ class BuildAutomat:
         self.m_os_access.print_console(str(exception))
         return False
 
-
-    def _get_config_name_from_arguments(self, args):
-        config_name = args[_CONFIG_NAME_KEY]
-        if config_name: # config option was given
-            config_file = self.m_file_locations.get_full_path_config_file(config_name)
-            if not self.m_fs_access.exists(config_file):
-                raise Exception('Error: There is no configuration file "' + str(config_file) + '". Did you forget to run 1_Configure.py?')
-            return config_name
-        return None
-
-
     def _get_first_existing_config_name(self):
         """
         The function will return the first config for which a config file and a CMakeCache.txt file exists.
@@ -216,7 +213,6 @@ class BuildAutomat:
         config_file = self.m_file_locations.get_full_path_configuration_folder() / (config + self.m_file_locations.get_config_file_ending())
         return self.m_fs_access.isfile(config_file)
 
-
     def _get_first_config_that_has_cache_file(self):
         config_file_configs = self._get_existing_config_file_configs()
         for config in config_file_configs:
@@ -224,11 +220,9 @@ class BuildAutomat:
                 return config
         return None
 
-
     def _has_existing_cache_file(self, config_name):
         cache_file_path = self.m_file_locations.get_full_path_generated_folder() / config_name / "CMakeCache.txt"
         return self.m_fs_access.isfile(cache_file_path)
-
 
     def _clear_makefile_dir(self, config_name):
         """
@@ -237,7 +231,6 @@ class BuildAutomat:
         full_config_path = self.m_file_locations.get_full_path_config_makefile_folder(config_name)
         if self.m_fs_access.exists(full_config_path):
             self.m_fs_access.rmtree(full_config_path)
-
 
     def _call_cmake_with_full_arguments(self, config_name):
         """
@@ -263,7 +256,6 @@ class BuildAutomat:
         if not self.m_os_access.execute_command(command):
             raise Exception("The python script failed because the call to cmake failed!")
 
-
     def _call_cmake_for_existing_cache_file(self, config_name):
         """
         runs CMake and uses the cached variables from the CMakeCache file.
@@ -277,9 +269,10 @@ class BuildAutomat:
         if not self.m_os_access.execute_command(full_command):
             raise Exception("The python script failed because the call to cmake failed!")
 
-
     def _get_cmake_build_command(self, config_name, args):
-
+        """
+        Assembles a cmake command line call to build the given configuration.
+        """
         # get command argument values
         is_clean_build = args[_CLEAN_KEY]
         target = args[_TARGET_KEY]
@@ -304,8 +297,6 @@ class BuildAutomat:
         command +=' --parallel ' + nr_cpus
 
         return command
-
-
 
 ########### free functions #########################################################################
 def _quotes(string):
