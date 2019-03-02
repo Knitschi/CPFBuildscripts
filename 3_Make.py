@@ -19,7 +19,8 @@ Options:
                             This is usually Debug or Release.
     --clean                 Use CMakes --clean-first option for the build, which triggers a fresh rebuild.
     --cpus <nr_cpus>        The number of cpu cores that should be used during the build.
-                            If no number is given, the number of available physical cores plus the number of hyper threaded cores will be used.
+                            If no number is given, the number of available physical cores plus the number
+                            of hyper-threading cores will be used.
 """
 
 import sys
