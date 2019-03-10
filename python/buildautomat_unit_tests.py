@@ -378,18 +378,31 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_cmake_call)
 
 
-    def mock_generate_make_files(self):
+    def mock_configure_impl(self, argv):
+        self.mock_configure_called = True
+        # create the config file
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
+        return True
+
+
+    def mock_generate_make_files_impl(self, argv):
+        self.mock_generate_args = argv
         self.mock_generate_called = True
+        
         # create the cache file
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
         return True
 
-    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.generate_make_files', return_value=True)
+
+    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.generate_make_files')
+    #@mock.patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure')
     def test_make_calls_generate_if_no_cache_file_exists(self, mock_generate_make_files):
         # setup
-        #self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
-        #self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
-        self.mock_generate_called = False
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_config_file('MyConfig'), "content")
+
+        self.mock_generate_called = []
+        mock_generate_make_files.side_effect = self.mock_generate_make_files_impl
+
         argv = {
             "<config_name>" : 'MyConfig',
             "--target" : None,
@@ -397,10 +410,36 @@ class TestBuildAutomat(unittest.TestCase):
             "--clean" : False,
             "--cpus" : None
             }
-        mock_generate_make_files.side_effect = self.mock_generate_make_files()
 
         # execute
+        self.assertTrue(self.sut.make(argv))
+
+        # verify
+        self.assertTrue(self.sut.m_fs_access.exists(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt"))
         self.assertTrue(self.mock_generate_called)
+        
 
+    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure')
+    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat._call_cmake_for_existing_cache_file')
+    def test_make_calls_configure_if_no_config_file_exists(self, mock_generate_make_files, mock_configure):
+        # setup
+        self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")
+        
+        self.mock_configure_called = False
+        mock_configure.side_effect = self.mock_configure_impl
 
+        argv = {
+            "<config_name>" : 'MyConfig',
+            "--target" : None,
+            "--config" : None,
+            "--clean" : False,
+            "--cpus" : None
+            }
+
+        # execute
+        self.assertTrue(self.sut.make(argv))
+
+        # verify
+        self.assertTrue(self.mock_configure_called)
+        self.sut.m_fs_access.exists(self.locations.get_full_path_config_file('MyConfig'))
 

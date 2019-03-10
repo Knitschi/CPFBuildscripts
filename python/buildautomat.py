@@ -92,7 +92,7 @@ class BuildAutomat:
                         '-D': []
                     }
                     if not self.configure(configureArgs):
-                        return self._print_exception('Error: The given configuration does not exist.')
+                        return self._print_exception('Error: The given configuration {0} does not exist.'.format(config_name))
             else:
                 config_name = self._get_first_existing_config_name()
 
@@ -126,7 +126,7 @@ class BuildAutomat:
             config_name = args[_CONFIG_NAME_KEY]
             if config_name:
                 # Try to generate a cache file if it does not yet exist.
-                if not self._has_existing_cache_file(config_name):
+                if (not self._has_existing_cache_file(config_name)) or (not self._developer_config_file_exists(config_name)):
                     generateArgs = {
                         _CONFIG_NAME_KEY : config_name,
                         _CLEAN_KEY : False
@@ -181,6 +181,7 @@ class BuildAutomat:
         return inherit_option
 
     def _print_exception(self, exception):
+        #print('---------------- ' + str(exception))
         self.m_os_access.print_console(str(exception))
         return False
 
