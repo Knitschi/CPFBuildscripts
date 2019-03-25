@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python3
+﻿#!/usr/bin/env python3
 """Usage:
     3_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
 
@@ -53,7 +53,7 @@ Custom Targets:
     - runAllTests_<package>
     - runFastTests_<package>
     - valgrind_<package>
-
+    
 """
 
 import sys
@@ -68,3 +68,4 @@ if __name__ == "__main__":
         sys.exit(2)
     else:
         sys.exit(0)
+
