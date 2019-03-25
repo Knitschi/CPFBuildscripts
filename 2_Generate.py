@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Usage:
     2_Generate.py [<config_name>] [--clean] [--help]
 
