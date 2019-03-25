@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Usage:
     3_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
 
