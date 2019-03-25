@@ -11,11 +11,17 @@ into the root directory of a CMakeProjectFramework repository.
 
 import shutil
 import os
+import stat
 
 _SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 _SCRIPTS = ['1_Configure.py', '2_Generate.py', '3_Make.py']
 
 if __name__ == "__main__":
     for script in _SCRIPTS:
-        shutil.copyfile(_SCRIPT_DIR + '/' + script, _SCRIPT_DIR + '/../../' + script)
+        sourcePath = _SCRIPT_DIR + '/' + script
+        destPath = _SCRIPT_DIR + '/../../' + script
+        shutil.copyfile(sourcePath, destPath)
+        # also make the copied file executable
+        st = os.stat(destPath)
+        os.chmod(destPath, st.st_mode | stat.S_IEXEC)
 
