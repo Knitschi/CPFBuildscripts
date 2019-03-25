@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python3
+﻿#!/usr/bin/env python3
 """Usage:
     2_Generate.py [<config_name>] [--clean] [--help]
 
@@ -28,3 +28,4 @@ if __name__ == "__main__":
         sys.exit(2)
     else:
         sys.exit(0)
+

@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
 This script is used to copy the build scripts
 
@@ -18,3 +18,4 @@ _SCRIPTS = ['1_Configure.py', '2_Generate.py', '3_Make.py']
 if __name__ == "__main__":
     for script in _SCRIPTS:
         shutil.copyfile(_SCRIPT_DIR + '/' + script, _SCRIPT_DIR + '/../../' + script)
+

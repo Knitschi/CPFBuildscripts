@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Usage: 
     1_Configure.py <config_name> [--inherits <parent_config>] [--list] [-D definition]...
 
@@ -55,3 +55,4 @@ if __name__ == "__main__":
         sys.exit(1)
     else:
         sys.exit(0)
+
