@@ -14,13 +14,46 @@
 
 Options:
     -h --help               Show this
-    --target <target>       Specify the build target.
+    --target <target>       Specify the build target. For the options see the list below.
     --config <config>       Specify the configuration for multi-config build systems.
                             This is usually Debug or Release.
     --clean                 Use CMakes --clean-first option for the build, which triggers a fresh rebuild.
     --cpus <nr_cpus>        The number of cpu cores that should be used during the build.
                             If no number is given, the number of available physical cores plus the number
                             of hyper-threading cores will be used.
+
+Custom Targets:
+    The following custom targets may be available.
+    The availability depends on the project configuration.
+
+    Global Targets
+    - abi-compliance-checker
+    - acyclic
+    - ALL_BUILD (Visual Studio) / all (Makefiles)
+    - clang-format
+    - clang-tidy
+    - distributionPackages
+    - install
+    - opencppcoverage
+    - pipeline
+    - runAllTests
+    - runFastTests
+    - valgrind
+    - ZERO_CHECK (Visual Studio)
+
+    Package Targets
+    - abi-compliance-checker_<package>
+    - clang-format_<binary-target>
+    - clang-tidy_<package>
+    - distributionPackages_<package>
+    - opencppcoverage_<package>
+    - <package>
+    - <package>_fixtures
+    - <package>_tests
+    - runAllTests_<package>
+    - runFastTests_<package>
+    - valgrind_<package>
+
 """
 
 import sys
