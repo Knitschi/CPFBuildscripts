@@ -1,53 +1,55 @@
-/**
 
-\page scriptConfigure 1_Configure.py
+1_Configure.py
+==============
 
 This script instantiates a configuration file in the \c Configuration directory.
 
-\section CLI1_Configure Command Line Interface
+Command Line Interface
+----------------------
 
-\verbatim
-Usage: 
-    1_Configure.py <config_name> [--inherits <parent_config>] [-D definition]...
 
-    Running this script generates the file
+.. code-block:: bash
 
-    Configuration/<config_name>.config.cmake
+  Usage: 
+      1_Configure.py <config_name> [--inherits <parent_config>] [-D definition]...
 
-    which contains a set of CMake variables that define one configuration of a CPF project.
-    The configuration defines which compiler or make-file generator is used and other arbitrary
-    settings. The generated config file can be changed by each developer to tweak the build or
-    set different paths to dependencies.
+      Running this script generates the file
 
-    The short way of using this script is by only giving the <config_name> argument
-    which in this case must be the name of one of the existing config file names that
-    can be found at the following locations.
+      Configuration/<config_name>.config.cmake
 
-    <root>/Configuration
-    <root>/Sources/CIBuildConfigurations
-    <root>/Sources/CPFCMake/DefaultConfigurations
+      which contains a set of CMake variables that define one configuration of a CPF project.
+      The configuration defines which compiler or make-file generator is used and other arbitrary
+      settings. The generated config file can be changed by each developer to tweak the build or
+      set different paths to dependencies.
 
-    If you want to create a configuration with a new name you can also specify
-    the --inherits to pass in the parent configuration which allows you to set
-    <config_name> freely.
+      The short way of using this script is by only giving the <config_name> argument
+      which in this case must be the name of one of the existing config file names that
+      can be found at the following locations.
 
-    For more information about configurations see:
-    https://knitschi.github.io/CMakeProjectFramework/doxygen/html/d7/d8d/_c_p_f_configuration.html
+      <root>/Configuration
+      <root>/Sources/CIBuildConfigurations
+      <root>/Sources/CPFCMake/DefaultConfigurations
 
-Options:
+      If you want to create a configuration with a new name you can also specify
+      the --inherits to pass in the parent configuration which allows you to set
+      <config_name> freely.
 
---inherits <parent_config>  This option must be set to an existing configuration from
-                            which variable definitions are inherited. 
+      For more information about configurations see:
+      https://knitschi.github.io/CMakeProjectFramework/doxygen/html/d7/d8d/_c_p_f_configuration.html
 
--D definition               This option can be given to set CMake variables
-                            int the generated file over the command line.
-                            This may be useful on a build-server.
-                            <definition> should look something like this:
-                            HUNTER_ROOT=/home/hunter_root
+  Options:
+
+  --inherits <parent_config>  This option must be set to an existing configuration from
+                              which variable definitions are inherited. 
+
+  -D definition               This option can be given to set CMake variables
+                              int the generated file over the command line.
+                              This may be useful on a build-server.
+                              <definition> should look something like this:
+                              HUNTER_ROOT=/home/hunter_root
                             
---list                      When this argument is given, the script will list
-                            the available existing configurations instead
-                            of generating a new file.
-\endverbatim
+  --list                      When this argument is given, the script will list
+                              the available existing configurations instead
+                              of generating a new file.
 
-*/
+

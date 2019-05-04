@@ -1,8 +1,9 @@
-/**
 
-\page scriptCopyFiles 0_CopyScripts.py
+.. _0_CopyScripts:
 
-The \c 0_CopyScripts.py script installs the other python scripts from CPFBuildscripts into the root directory of your CPF project.
+0_CopyScripts.py
+================
+
+The :code:`0_CopyScripts.py` script installs the other python scripts from CPFBuildscripts into the root directory of your CPF project.
 This script must be executed once after cloning a CPF project. The script does not take any arguments.
 
-*/

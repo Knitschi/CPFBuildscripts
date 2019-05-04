@@ -1,7 +1,6 @@
-/**
 
-\page CPFBuildscripts
-\section CPFBuildscripts
+CPFBuildscripts
+===============
 
 The CPFBuildscripts package provides python scripts for simplifying the CMake calls of CPF projects.
 The scripts can be used for configuring and building a CPFCMake project.
@@ -11,13 +10,15 @@ CPFBuildscripts package use the knowledge about the structure of the CPF project
 of those commands. It is therefore highly recommended to use the CPFBuildscripts package in combination
 with the CPFCMake package.
 
-<HR>
 
-## Index ##
+Index
+-----
 
-- \subpage scriptCopyFiles
-- \subpage scriptConfigure
-- \subpage scriptGenerate
-- \subpage scriptMake
+.. toctree::
+  :maxdepth: 1
 
-*/
+  0_CopyScriptsDocs
+  1_ConfigureDocs
+  2_GenerateDocs
+  3_MakeDocs
+

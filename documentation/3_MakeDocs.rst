@@ -1,67 +1,67 @@
-/**
 
-\page scriptMake 3_Make.py
+3_Make.py
+=========
 
 This script builds the targets in a CPF project.
 
-\section CLI3_Make Command Line Interface
+Command Line Interface
+----------------------
 
-\verbatim
-Usage:
-    3_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
+.. code-block:: bash
 
-    This script builds the given target in the given configuration.
+  Usage:
+      3_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
 
-    If no <config_name> is given, the first configuration that already
-    has a CMakeCache.txt file will be used.
-    If you specify a <config_name> and there is no CMakeCache.txt file
-    for that config, 3_Make.py call 2_Generate.py in order to try
-    to create one.
+      This script builds the given target in the given configuration.
 
-    If no <target> is given, the "ALL_BUILD" target will be build.
+      If no <config_name> is given, the first configuration that already
+      has a CMakeCache.txt file will be used.
+      If you specify a <config_name> and there is no CMakeCache.txt file
+      for that config, 3_Make.py call 2_Generate.py in order to try
+      to create one.
 
-Options:
-    -h --help               Show this
-    --target <target>       Specify the build target. For the options see the list below.
-    --config <config>       Specify the configuration for multi-config build systems.
-                            This is usually Debug or Release.
-    --clean                 Use CMakes --clean-first option for the build, which triggers a fresh rebuild.
-    --cpus <nr_cpus>        The number of cpu cores that should be used during the build.
-                            If no number is given, the number of available physical cores plus the number
-                            of hyper-threading cores will be used.
+      If no <target> is given, the "ALL_BUILD" target will be build.
 
-Custom Targets:
-    The following custom targets may be available.
-    The availability depends on the project configuration.
+  Options:
+      -h --help               Show this
+      --target <target>       Specify the build target. For the options see the list below.
+      --config <config>       Specify the configuration for multi-config build systems.
+                              This is usually Debug or Release.
+      --clean                 Use CMakes --clean-first option for the build, which triggers a fresh rebuild.
+      --cpus <nr_cpus>        The number of cpu cores that should be used during the build.
+                              If no number is given, the number of available physical cores plus the number
+                              of hyper-threading cores will be used.
 
-    Global Targets
-    - abi-compliance-checker
-    - acyclic
-    - ALL_BUILD (Visual Studio) / all (Makefiles)
-    - clang-format
-    - clang-tidy
-    - distributionPackages
-    - install
-    - opencppcoverage
-    - pipeline
-    - runAllTests
-    - runFastTests
-    - valgrind
-    - ZERO_CHECK (Visual Studio)
+  Custom Targets:
+      The following custom targets may be available.
+      The availability depends on the project configuration.
 
-    Package Targets
-    - abi-compliance-checker_<package>
-    - clang-format_<binary-target>
-    - clang-tidy_<package>
-    - distributionPackages_<package>
-    - opencppcoverage_<package>
-    - <package>
-    - <package>_fixtures
-    - <package>_tests
-    - runAllTests_<package>
-    - runFastTests_<package>
-    - valgrind_<package>
+      Global Targets
+      - abi-compliance-checker
+      - acyclic
+      - ALL_BUILD (Visual Studio) / all (Makefiles)
+      - clang-format
+      - clang-tidy
+      - distributionPackages
+      - install
+      - opencppcoverage
+      - pipeline
+      - runAllTests
+      - runFastTests
+      - valgrind
+      - ZERO_CHECK (Visual Studio)
 
-\endverbatim
+      Package Targets
+      - abi-compliance-checker_<package>
+      - clang-format_<binary-target>
+      - clang-tidy_<package>
+      - distributionPackages_<package>
+      - opencppcoverage_<package>
+      - <package>
+      - <package>_fixtures
+      - <package>_tests
+      - runAllTests_<package>
+      - runFastTests_<package>
+      - valgrind_<package>
 
-*/
+
