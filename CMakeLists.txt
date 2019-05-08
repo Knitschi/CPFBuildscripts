@@ -24,6 +24,7 @@ set( sources
     documentation/1_ConfigureDocs.rst
     documentation/2_GenerateDocs.rst
     documentation/3_MakeDocs.rst
+	README.rst
 )
 
 # add a target that only holds the files and does nothing

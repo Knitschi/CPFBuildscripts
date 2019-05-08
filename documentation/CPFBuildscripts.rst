@@ -19,6 +19,7 @@ Index
 .. toctree::
   :maxdepth: 1
 
+  ../README
   0_CopyScriptsDocs
   1_ConfigureDocs
   2_GenerateDocs
