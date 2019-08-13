@@ -24,6 +24,7 @@ class FileLocations:
         self.CMAKELISTS_ROOT_DIR = "Sources"
         self.GENERATED_FILES_DIR = "Generated"
         self.CONFIGURATION_FILES_DIR = "Configuration"
+        self.DEFAULT_INSTALL_DIR = "install"
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CPFDependencies.dot"
         self.GENERATE_CONFIG_FILE_SCRIPT = "Sources/CPFCMake/Scripts/createConfigFile.cmake"
         self.CONFIG_FILE_TEMPLATE = "Sources/CPFCMake/Templates/DeveloperConfigTemplate.cmake.in"
@@ -53,3 +54,5 @@ class FileLocations:
     def get_full_path_config_file(self, configName):
         return self.get_full_path_configuration_folder().joinpath(configName + self.get_config_file_ending())
 
+    def get_full_path_default_install_folder(self):
+        return self.get_full_path_cpf_root() / self.DEFAULT_INSTALL_DIR
