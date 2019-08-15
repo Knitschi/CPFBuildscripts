@@ -14,7 +14,7 @@ def get_version_from_repository(cpfRootDir, package = None):
     script = cpfRootDir.joinpath('Sources/CPFCMake/Scripts/getVersionFromRepository.cmake')
 
     return osa.execute_command_output(
-        'cmake -DREPO_DIR="{0}" -P {1}'.format(repo_dir, script),
+        'cmake -DREPO_DIR="{0}" -P "{1}"'.format(repo_dir, script),
         cwd=cpfRootDir,
         print_output=miscosaccess.OutputMode.ON_ERROR,
         print_command=False
