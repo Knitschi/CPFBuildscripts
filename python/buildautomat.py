@@ -244,12 +244,12 @@ class BuildAutomat:
 
         command = (
             "cmake"
-            # set the cmakelists root directory
+            # Set the cmakelists root directory
             " -H" + _quotes(sources_directory) +
-            # set the folder for the generated make files
+            # Set the folder for the generated make files
             " -B" + _quotes(makefile_directory) +
-            # set the generator (makefileType)
-            " -C" + _quotes(full_path_config_file) +
+            # The name of the configuration which allows us to include the right config file.
+            " -DCPF_CONFIG=" + config_name +
             # Generate the .dot file that is used to document the target dependencies.
             " --graphviz="+ _quotes(makefile_directory  / self.m_file_locations.TARGET_DEPENDENCIES_DOT_FILE_NAME)
             )
