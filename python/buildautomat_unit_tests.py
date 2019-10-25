@@ -183,7 +183,7 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-H"/MyCPFProject/Sources" '
             '-B"/MyCPFProject/Generated/MyConfig" '
-            '-DCPF_CONFIG=MyConfig '
+            '-C"/MyCPFProject/Configuration/MyConfig.config.cmake" '
             '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
             )
 
@@ -236,7 +236,7 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-H"/MyCPFProject/Sources" '
             '-B"/MyCPFProject/Generated/MyConfig" '
-            '-DCPF_CONFIG=MyConfig '
+            '-C"/MyCPFProject/Configuration/MyConfig.config.cmake" '
             '--graphviz="/MyCPFProject/Generated/MyConfig/CPFDependencies.dot"'
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
@@ -280,7 +280,7 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-H"/MyCPFProject/Sources" '
             '-B"/MyCPFProject/Generated/MyConfig1" '
-            '-DCPF_CONFIG=MyConfig '
+            '-C"/MyCPFProject/Configuration/MyConfig1.config.cmake" '
             '--graphviz="/MyCPFProject/Generated/MyConfig1/CPFDependencies.dot"'
             )
         self.assertEqual(self.sut.m_os_access.execute_command_arg[0][1], expected_command)
