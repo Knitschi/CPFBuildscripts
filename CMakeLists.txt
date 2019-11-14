@@ -3,7 +3,7 @@ include(cpfInitPackageProject)
 include(cpfAddFilePackage)
 include(cpfAddRunTestsTarget)
 
-cpfInitPackageProject()
+cpfInitPackageProject(LANGUAGES NONE)
 
 set( sources 
     run_tests.py
