@@ -28,6 +28,7 @@ class FileLocations:
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CPFDependencies.dot"
         self.GENERATE_CONFIG_FILE_SCRIPT = "Sources/CPFCMake/Scripts/createConfigFile.cmake"
         self.CONFIG_FILE_TEMPLATE = "Sources/CPFCMake/Templates/DeveloperConfigTemplate.cmake.in"
+        self.CONAN_FILE = "conanfile.txt"
 
     def get_full_path_cpf_root(self):
         return self.cpf_root_dir
@@ -36,10 +37,13 @@ class FileLocations:
         return self.get_full_path_cpf_root() / self.GENERATED_FILES_DIR
 
     def get_full_path_configuration_folder(self):
-        return self.get_full_path_cpf_root().joinpath(self.CONFIGURATION_FILES_DIR)
+        return self.get_full_path_cpf_root() / self.CONFIGURATION_FILES_DIR
+
+    def get_full_path_conan_generated_cmake_files_dir(self, configName):
+        return self.get_full_path_configuration_folder() / configName
 
     def get_full_path_source_folder(self):
-        return self.get_full_path_cpf_root().joinpath(self.CMAKELISTS_ROOT_DIR)
+        return self.get_full_path_cpf_root() / self.CMAKELISTS_ROOT_DIR
 
     def get_full_path_config_makefile_folder(self, configName):
         makefile_directory = self.get_full_path_generated_folder().joinpath(configName)
@@ -56,3 +60,6 @@ class FileLocations:
 
     def get_full_path_default_install_folder(self):
         return self.get_full_path_cpf_root() / self.DEFAULT_INSTALL_DIR
+
+    def get_full_path_conan_file(self):
+        return self.get_full_path_source_folder() / self.CONAN_FILE

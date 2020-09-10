@@ -1,5 +1,5 @@
 
-3_Make.py
+4_Make.py
 =========
 
 This script builds the targets in a CPF project.
@@ -10,14 +10,14 @@ Command Line Interface
 .. code-block:: bash
 
   Usage:
-      3_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
+      4_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
 
       This script builds the given target in the given configuration.
 
       If no <config_name> is given, the first configuration that already
       has a CMakeCache.txt file will be used.
       If you specify a <config_name> and there is no CMakeCache.txt file
-      for that config, 3_Make.py call 2_Generate.py in order to try
+      for that config, 4_Make.py call 3_Generate.py in order to try
       to create one.
 
       If no <target> is given, the "ALL_BUILD" target will be build.

@@ -74,6 +74,26 @@ class BuildAutomat:
             return self._print_exception(exception)
 
 
+    def get_dependencies(self, args):
+        """
+        Runs conan to get external binary packages.
+        """
+        try:
+
+            if not self.m_fs_access.exists(self.m_file_locations.get_full_path_conan_file()):
+                # If there is no conanfile we consider this step to be not necessary an always return true.
+                self.m_os_access.print_console("Found no conanfile. No external packages were acquired.")
+                return True
+            else:
+                # Get the conan packages for the specified configuration.
+                config_name = self._get_config_name_and_run_config_step_if_needed(args)
+                self._call_conan_install(config_name)
+
+            return True
+
+        except BaseException as exception:
+            return self._print_exception(exception)
+
     def generate_make_files(self, args):
         """
         Runs the cmake to create the makefiles.
@@ -81,20 +101,12 @@ class BuildAutomat:
         try:
             start_time = time.perf_counter()
 
-            # Use the explicit config name or try to find an existing one.
-            config_name = args[_CONFIG_NAME_KEY]
-            if config_name:
-                if not self._developer_config_file_exists(config_name):
-                    configureArgs = {
-                        _CONFIG_NAME_KEY: config_name,
-                        _INHERITS_KEY: None,
-                        _LIST_KEY: False,
-                        '-D': []
-                    }
-                    if not self.configure(configureArgs):
-                        return self._print_exception('Error: The given configuration {0} does not exist.'.format(config_name))
-            else:
-                config_name = self._get_first_existing_config_name()
+            config_name = self._get_config_name_and_run_config_step_if_needed(args)
+
+            # If a conanfile exists we need to get the dependencies before we can generate.
+            if self.m_fs_access.exists(self.m_file_locations.get_full_path_conan_file()):
+                if not self.get_dependen4_  cies(args):
+                    return False
 
             # Clean the build-tree if demanded
             if args[_CLEAN_KEY]:
@@ -136,7 +148,7 @@ class BuildAutomat:
             else:
                 config_name = self._get_first_config_that_has_cache_file()
                 if not config_name:
-                    return self._print_exception("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
+                    return self._print_exception("No existing CMakeCache.txt file found. You need to run 3_Generate.py before running 4_Make.py")
 
             # We not have a configuration with a cache file and can call cmake to build it.
             cmake_build_command = self._get_cmake_build_command(config_name, args)
@@ -185,6 +197,22 @@ class BuildAutomat:
         self.m_os_access.print_console(str(exception))
         return False
 
+    def _get_config_name_and_run_config_step_if_needed(self, args):
+        config_name = args[_CONFIG_NAME_KEY]
+        if config_name:
+            if not self._developer_config_file_exists(config_name):
+                configureArgs = {
+                    _CONFIG_NAME_KEY: config_name,
+                    _INHERITS_KEY: None,
+                    _LIST_KEY: False,
+                    '-D': []
+                }
+                if not self.configure(configureArgs):
+                    raise Exception('Error: The given configuration {0} does not exist.'.format(config_name))
+            return config_name
+        else:
+            return self._get_first_existing_config_name()
+
     def _get_first_existing_config_name(self):
         """
         The function will return the first config for which a config file and a CMakeCache.txt file exists.
@@ -193,7 +221,7 @@ class BuildAutomat:
         """
         config_file_configs = self._get_existing_config_file_configs()
         if not config_file_configs:
-            raise Exception('Error: You need to specify a <config_name> if there is not existing config file in <root>/Configuration.')
+            raise Exception('Error: You need to specify a <config_name> if there is no config file in <root>/Configuration.')
         return config_file_configs[0]
 
     def _get_existing_config_file_configs(self):
@@ -220,6 +248,31 @@ class BuildAutomat:
             if self._has_existing_cache_file(config):
                 return config
         return None
+
+    def _has_conanfile(self):
+        return self.m_fs_access.exists(self.m_file_locations.get_full_path_conan_file())
+
+    def _call_conan_install(self, config_name):
+        """
+        runs the 
+        
+        conan install -pr conan-profile -if generated-files-dir source-dir --build=missing
+        
+        command
+        """
+        conanProfilePath = self.m_file_locations.get_full_path_source_folder() / ('CIBuildConfigurations/ConanProfile-' + config_name)
+
+        if not self.m_fs_access.exists(conanProfilePath):
+            # Todo: Clear how profiles are handled.
+            raise Exception("2_GetDependencies.py currently expects a conan profile file {0} to exist.".format(conanProfilePath))
+
+        conan_command = "conan install -pr {0} -if {1} {2} --build=missing".format(
+            conanProfilePath,
+            self.m_file_locations.get_full_path_conan_generated_cmake_files_dir(config_name),
+            self.m_file_locations.get_full_path_source_folder())
+
+        if not self.m_os_access.execute_command(conan_command):
+            raise Exception("The python script failed because the call to conan failed!")
 
     def _has_existing_cache_file(self, config_name):
         cache_file_path = self.m_file_locations.get_full_path_generated_folder() / config_name / "CMakeCache.txt"

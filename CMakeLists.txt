@@ -9,8 +9,8 @@ set( sources
     run_tests.py
     0_CopyScripts.py
     1_Configure.py
-    2_Generate.py
-    3_Make.py
+    3_Generate.py
+    4_Make.py
     python/buildautomat.py
     python/buildautomat_unit_tests.py
     python/docopt.py

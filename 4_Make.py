@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Usage:
-    3_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
+    4_Make.py [<config_name>] [--target <target>] [--config <config>] [--clean] [--cpus <nr_cpus>] [--help]
 
     This script builds the given target in the given configuration.
 
     If no <config_name> is given, the first configuration that already
     has a CMakeCache.txt file will be used.
     If you specify a <config_name> and there is no CMakeCache.txt file
-    for that config, 3_Make.py call 2_Generate.py in order to try
+    for that config, 4_Make.py call 3_Generate.py in order to try
     to create one.
 
     If no <target> is given, the "ALL_BUILD" target will be build.
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='3_Make 1.0')
     _AUTOMAT = buildautomat.BuildAutomat()
     if not _AUTOMAT.make(_ARGS):
-        print("Error: Script 3_Make.py failed.")
+        print("Error: Script 4_Make.py failed.")
         sys.exit(2)
     else:
         sys.exit(0)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Usage:
-    2_Generate.py [<config_name>] [--clean] [--help]
+    3_Generate.py [<config_name>] [--clean] [--help]
 
     Running this script will run CMake to generate the "make-files" for the given
     configuration. <config_name> must be the base-name of a configuration file
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='2_Generate 1.0')
     _AUTOMAT = buildautomat.BuildAutomat()
     if not _AUTOMAT.generate_make_files(_ARGS):
-        print("Error: Script 2_Generate.py failed.")
+        print("Error: Script 3_Generate.py failed.")
         sys.exit(2)
     else:
         sys.exit(0)
