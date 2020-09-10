@@ -7,7 +7,7 @@ cpfInitPackageProject(LANGUAGES NONE)
 
 set( sources 
     run_tests.py
-    0_GetDependencies.py
+    0_CopyScripts.py
     1_Configure.py
     2_Generate.py
     3_Make.py
