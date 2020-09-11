@@ -105,7 +105,7 @@ class BuildAutomat:
 
             # If a conanfile exists we need to get the dependencies before we can generate.
             if self.m_fs_access.exists(self.m_file_locations.get_full_path_conan_file()):
-                if not self.get_dependen4_  cies(args):
+                if not self.get_dependencies(args):
                     return False
 
             # Clean the build-tree if demanded
