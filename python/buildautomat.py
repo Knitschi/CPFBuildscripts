@@ -267,9 +267,9 @@ class BuildAutomat:
             raise Exception("2_GetDependencies.py currently expects a conan profile file {0} to exist.".format(conanProfilePath))
 
         conan_command = "conan install -pr {0} -if {1} {2} --build=missing".format(
-            conanProfilePath,
-            self.m_file_locations.get_full_path_conan_generated_cmake_files_dir(config_name),
-            self.m_file_locations.get_full_path_source_folder())
+            _quotes(conanProfilePath),
+            _quotes(self.m_file_locations.get_full_path_conan_generated_cmake_files_dir(config_name)),
+            _quotes(self.m_file_locations.get_full_path_source_folder()))
 
         if not self.m_os_access.execute_command(conan_command):
             raise Exception("The python script failed because the call to conan failed!")
