@@ -22,8 +22,9 @@ set( sources
     documentation/CPFBuildscripts.rst
     documentation/0_CopyScriptsDocs.rst
     documentation/1_ConfigureDocs.rst
-    documentation/2_GenerateDocs.rst
-    documentation/3_MakeDocs.rst
+    documentation/2_GetDependencies.rst
+    documentation/3_GenerateDocs.rst
+    documentation/4_MakeDocs.rst
 	README.md
 )
 
