@@ -61,7 +61,7 @@ from Sources.CPFBuildscripts.python.docopt import docopt
 import Sources.CPFBuildscripts.python.buildautomat as buildautomat
 
 if __name__ == "__main__":
-    _ARGS = docopt(__doc__, version='3_Make 1.0')
+    _ARGS = docopt(__doc__, version='4_Make 1.0')
     _AUTOMAT = buildautomat.BuildAutomat()
     if not _AUTOMAT.make(_ARGS):
         print("Error: Script 4_Make.py failed.")

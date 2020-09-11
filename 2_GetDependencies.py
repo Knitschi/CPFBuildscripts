@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Usage: 
-    2_GetDependencies.py <config_name>
+    2_GetDependencies.py [<config_name>]
 
     Running this script runs the conan command
 

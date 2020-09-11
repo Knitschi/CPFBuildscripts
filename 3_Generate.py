@@ -21,7 +21,7 @@ from Sources.CPFBuildscripts.python.docopt import docopt
 from Sources.CPFBuildscripts.python import buildautomat
 
 if __name__ == "__main__":
-    _ARGS = docopt(__doc__, version='2_Generate 1.0')
+    _ARGS = docopt(__doc__, version='3_Generate 1.0')
     _AUTOMAT = buildautomat.BuildAutomat()
     if not _AUTOMAT.generate_make_files(_ARGS):
         print("Error: Script 3_Generate.py failed.")
