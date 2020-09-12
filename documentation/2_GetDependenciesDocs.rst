@@ -7,7 +7,7 @@ This script runs the CMake generate step that creates the native "make files" fo
 Command Line Interface
 ----------------------
 
-.. code-block:: bash
+.. code-block:: none
 
     Usage: 
         2_GetDependencies.py <config_name>
