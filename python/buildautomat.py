@@ -269,7 +269,7 @@ class BuildAutomat:
         conan_command = "conan install -pr {0} -if {1} {2} --build=missing".format(
             _quotes(conanProfilePath),
             _quotes(self.m_file_locations.get_full_path_conan_generated_cmake_files_dir(config_name)),
-            _quotes(self.m_file_locations.get_full_path_source_folder()))
+            _quotes(self.m_file_locations.get_full_path_cpf_root()))
 
         if not self.m_os_access.execute_command(conan_command):
             raise Exception("The python script failed because the call to conan failed!")
