@@ -28,7 +28,7 @@ class FileLocations:
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CPFDependencies.dot"
         self.GENERATE_CONFIG_FILE_SCRIPT = "Sources/CPFCMake/Scripts/createConfigFile.cmake"
         self.CONFIG_FILE_TEMPLATE = "Sources/CPFCMake/Templates/DeveloperConfigTemplate.cmake.in"
-        self.CONAN_FILE = "conanfile.txt"
+        self.CONAN_FILE = "conanfile.py"
 
     def get_full_path_cpf_root(self):
         return self.cpf_root_dir
