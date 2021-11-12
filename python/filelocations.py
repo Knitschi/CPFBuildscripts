@@ -62,4 +62,4 @@ class FileLocations:
         return self.get_full_path_cpf_root() / self.DEFAULT_INSTALL_DIR
 
     def get_full_path_conan_file(self):
-        return self.get_full_path_source_folder() / self.CONAN_FILE
+        return self.get_full_path_cpf_root() / self.CONAN_FILE
