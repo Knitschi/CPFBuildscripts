@@ -42,7 +42,7 @@ Custom Targets:
     - ZERO_CHECK (Visual Studio)
 
     Package Targets
-    - abi-compliance-checker_<package>
+    - abi-compliance-checker_<package-component>
     - clang-format_<binary-target>
     - clang-tidy_<package>
     - distributionPackages_<package>
