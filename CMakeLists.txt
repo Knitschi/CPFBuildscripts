@@ -1,9 +1,13 @@
 
-include(cpfInitPackageProject)
+include(cpfPackageProject)
 include(cpfAddFilePackage)
 include(cpfAddRunTestsTarget)
 
-cpfInitPackageProject(LANGUAGES NONE)
+cpfPackageProject(
+    TARGET_NAMESPACE CIConfig
+	COMPONENTS SINGLE_COMPONENT
+    LANGUAGES NONE
+)
 
 set( sources 
     run_tests.py
