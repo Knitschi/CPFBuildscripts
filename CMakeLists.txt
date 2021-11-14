@@ -1,6 +1,6 @@
 
 include(cpfPackageProject)
-include(cpfAddFilePackage)
+include(cpfAddFilePackageComponent)
 include(cpfAddRunTestsTarget)
 
 cpfPackageProject(
@@ -33,7 +33,7 @@ set( sources
 )
 
 # add a target that only holds the files and does nothing
-cpfAddFilePackage(
+cpfAddFilePackageComponent(
     SOURCES ${sources}
 )
 
