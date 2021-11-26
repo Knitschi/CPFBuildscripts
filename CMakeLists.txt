@@ -48,5 +48,5 @@ cpfAddFilePackageComponent(
 set(testScriptArgs "${CPFTESTS_TEST_NAME}")
 cpfAddRunPython3TestTarget( run_tests.py "${testScriptArgs}" "${sources}" "" "" )
 
-finalizePackageProject()
+cpfFinalizePackageProject()
 
