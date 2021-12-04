@@ -32,7 +32,7 @@ Custom Targets:
     - ALL_BUILD (Visual Studio) / all (Makefiles)
     - clang-format
     - clang-tidy
-    - distributionPackages
+    - packageArchives
     - install
     - opencppcoverage
     - pipeline
@@ -45,7 +45,7 @@ Custom Targets:
     - abi-compliance-checker_<package-component>
     - clang-format_<binary-target>
     - clang-tidy_<package>
-    - distributionPackages_<package>
+    - packageArchives_<package>
     - opencppcoverage_<package>
     - <package>
     - <package>_fixtures
