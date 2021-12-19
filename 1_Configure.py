@@ -44,8 +44,11 @@ Options:
 """
 
 import sys
-from Sources.CPFBuildscripts.python.docopt import docopt
-from Sources.CPFBuildscripts.python import buildautomat
+
+sys.path.append('@CPF_BUILDSCRIPTS_DIR@')
+
+from python.docopt import docopt
+from python import buildautomat
 
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='1_Configure 1.0')

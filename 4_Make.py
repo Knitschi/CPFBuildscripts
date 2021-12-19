@@ -57,8 +57,10 @@ Custom Targets:
 """
 
 import sys
-from Sources.CPFBuildscripts.python.docopt import docopt
-import Sources.CPFBuildscripts.python.buildautomat as buildautomat
+sys.path.append('@CPF_BUILDSCRIPTS_DIR@')
+
+from python.docopt import docopt
+from python import buildautomat
 
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='4_Make 1.0')
