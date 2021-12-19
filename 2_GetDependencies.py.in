@@ -12,14 +12,22 @@
 """
 
 import sys
-sys.path.append('@CPF_BUILDSCRIPTS_DIR@')
+sys.path.append('@CPFBuildscripts_DIR@')
 
+import os
 from python.docopt import docopt
 from python import buildautomat
 
+_CPFCMake_DIR = '@CPFCMake_DIR@'
+_CIBuildConfigurations_DIR = '@CIBuildConfigurations_DIR@'
+
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='2_GetDependencies 1.0')
-    _AUTOMAT = buildautomat.BuildAutomat()
+    _AUTOMAT = buildautomat.BuildAutomat(
+        os.path.dirname(os.path.realpath(__file__)),
+        _CPFCMake_DIR,
+        _CIBuildConfigurations_DIR
+        )
     if not _AUTOMAT.get_dependencies(_ARGS):
         print("Error: Script 2_GetDependencies.py failed.")
         sys.exit(1)

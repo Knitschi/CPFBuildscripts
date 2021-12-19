@@ -23,15 +23,17 @@ class TestBuildAutomat(unittest.TestCase):
 
         # define some constants
         self.cpf_root = "/MyCPFProject"
+        self.CPFCMake_DIR = "/MyCPFProject/Sources/external/CPFCMake"
+        self.CIBuildConfigurations_DIR = "/MyCPFProject/Sources/CIBuildConfigurations"
         self.path_to_common_tools = "C:\\path\\to\\CommonTools\\"
         self.cpu_count = 4
 
         # Setup the system under test
-        self.sut = buildautomat.BuildAutomat()
+        self.sut = buildautomat.BuildAutomat(self.cpf_root, self.CPFCMake_DIR, self.CIBuildConfigurations_DIR)
 
         # Replace the FileSystemAccess with a fake implementation that contains
         # The basic folder and file structure.
-        self.locations = filelocations.FileLocations(self.cpf_root)
+        self.locations = filelocations.FileLocations(self.cpf_root, self.CPFCMake_DIR, self.CIBuildConfigurations_DIR)
         self.sut.m_file_locations = self.locations
         self.sut.m_fs_access = filesystemaccess.FakeFileSystemAccess()
         # self.sut.m_fs_access.mkdirs(self.locations.getFullPathInfrastructureFolder())
@@ -98,9 +100,12 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=MyProjectConfig '
+            '-DCPF_ROOT_DIR=/MyCPFProject '
+            '-DCPFCMake_DIR=/MyCPFProject/Sources/external/CPFCMake '
+            '-DCIBuildConfigurations_DIR=/MyCPFProject/Sources/CIBuildConfigurations '
             '-DCMAKE_GENERATOR="Visual Studio 14 2015 Amd64" '
             '-DCPF_TEST_FILES_DIR="C:/Temp bla/Tests" '
-            '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
+            '-P "/MyCPFProject/Sources/external/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
@@ -125,7 +130,10 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=MyConfig '
-            '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
+            '-DCPF_ROOT_DIR=/MyCPFProject '
+            '-DCPFCMake_DIR=/MyCPFProject/Sources/external/CPFCMake '
+            '-DCIBuildConfigurations_DIR=/MyCPFProject/Sources/CIBuildConfigurations '
+            '-P "/MyCPFProject/Sources/external/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
@@ -149,7 +157,10 @@ class TestBuildAutomat(unittest.TestCase):
         expected_command = (
             'cmake '
             '-DLIST_CONFIGURATIONS=TRUE '
-            '-P "/MyCPFProject/Sources/CPFCMake/Scripts/createConfigFile.cmake"'
+            '-DCPF_ROOT_DIR=/MyCPFProject '
+            '-DCPFCMake_DIR=/MyCPFProject/Sources/external/CPFCMake '
+            '-DCIBuildConfigurations_DIR=/MyCPFProject/Sources/CIBuildConfigurations '
+            '-P "/MyCPFProject/Sources/external/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
             self.sut.m_os_access.execute_command_arg[0][1],
@@ -294,7 +305,7 @@ class TestBuildAutomat(unittest.TestCase):
         return True
 
 
-    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure', return_value=True)
+    @patch('python.buildautomat.BuildAutomat.configure', return_value=True)
     def test_generate_make_files_runs_configure_step_if_config_does_not_exist(self, mock_configure):
 
         # setup
@@ -307,7 +318,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertTrue(self.sut.generate_make_files(argv))
 
 
-    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure', return_value=False)
+    @patch('python.buildautomat.BuildAutomat.configure', return_value=False)
     def test_generate_make_files_returns_false_when_no_config_option_is_given_and_no_config_file_exists(self, mock_configure):
        
         # setup
@@ -322,7 +333,7 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertTrue("Error:" in self.sut.m_os_access.console_output)
 
 
-    @patch('Sources.CPFBuildscripts.python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
+    @patch('python.miscosaccess.FakeMiscOsAccess.execute_command', return_value=False)
     def test_generate_make_files_returns_false_if_cmake_call_fails(self, mock_executeCommandAndPrintResult):
         # setup
         argv = {"<config_name>" : "MyConfig", "--clean" : False}
@@ -394,7 +405,7 @@ class TestBuildAutomat(unittest.TestCase):
         return True
 
 
-    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.generate_make_files')
+    @patch('python.buildautomat.BuildAutomat.generate_make_files')
     #@mock.patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure')
     def test_make_calls_generate_if_no_cache_file_exists(self, mock_generate_make_files):
         # setup
@@ -419,8 +430,8 @@ class TestBuildAutomat(unittest.TestCase):
         self.assertTrue(self.mock_generate_called)
         
 
-    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat.configure')
-    @patch('Sources.CPFBuildscripts.python.buildautomat.BuildAutomat._call_cmake_for_existing_cache_file')
+    @patch('python.buildautomat.BuildAutomat.configure')
+    @patch('python.buildautomat.BuildAutomat._call_cmake_for_existing_cache_file')
     def test_make_calls_configure_if_no_config_file_exists(self, mock_generate_make_files, mock_configure):
         # setup
         self.sut.m_fs_access.addfile(self.locations.get_full_path_generated_folder() / "MyConfig/CMakeCache.txt", "content")

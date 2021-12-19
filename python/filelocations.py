@@ -3,15 +3,6 @@
 import os
 from pathlib import PurePosixPath
 
-def get_cpf_root_dir_from_script_dir():
-    """ This should be the only entry point for defining absolute pathes """
-    head = os.path.split(os.path.abspath(__file__))[0]
-    head = os.path.split(head)[0]
-    head = os.path.split(head)[0]
-    head = os.path.split(head)[0]
-    head = head.replace("\\", "/")
-    return PurePosixPath(head)
-
 
 class FileLocations:
     """
@@ -19,15 +10,17 @@ class FileLocations:
     Note that this knowledge is partially duplicated in the jenkins pipeline script.
     """
 
-    def __init__(self, cpf_root_dir):
-        self.cpf_root_dir = PurePosixPath(cpf_root_dir)
+    def __init__(self, cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir):
+        self.cpf_root_dir = PurePosixPath(cpf_root_dir.replace('\\', '/'))
+        self.cpf_cmake_dir =  PurePosixPath(cpf_cmake_dir.replace('\\', '/'))
+        self.cibuildconfigurations_dir =  PurePosixPath(cibuildconfigurations_dir.replace('\\', '/'))
         self.CMAKELISTS_ROOT_DIR = "Sources"
         self.GENERATED_FILES_DIR = "Generated"
         self.CONFIGURATION_FILES_DIR = "Configuration"
         self.DEFAULT_INSTALL_DIR = "install"
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CPFDependencies.dot"
-        self.GENERATE_CONFIG_FILE_SCRIPT = "Sources/CPFCMake/Scripts/createConfigFile.cmake"
-        self.CONFIG_FILE_TEMPLATE = "Sources/CPFCMake/Templates/DeveloperConfigTemplate.cmake.in"
+        self.GENERATE_CONFIG_FILE_SCRIPT = self.cpf_cmake_dir / "Scripts/createConfigFile.cmake"
+        #self.CONFIG_FILE_TEMPLATE = self.cpf_cmake_dir / "Templates/DeveloperConfigTemplate.cmake.in"
         self.CONAN_FILE = "conanfile.py"
 
     def get_full_path_cpf_root(self):

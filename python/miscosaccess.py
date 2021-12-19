@@ -41,14 +41,14 @@ class MiscOsAccess:
     This allows replacing the calls to these functions in tests.
     """
 
-    def execute_command(self, command, cwd=None):
+    def execute_command(self, command, cwd=None, print_command=True):
         """
         Executes the command and prints the result. Returns true if the errorcode was 0.
         Use this version when you do not need the output string and only run one command
         in parallel.
         """
         try:
-            self.execute_command_output(command, cwd=cwd, print_output=OutputMode.ALWAYS, print_command=True)
+            self.execute_command_output(command, cwd=cwd, print_output=OutputMode.ALWAYS, print_command=print_command)
             return True
 
         except CalledProcessError as err:
@@ -189,8 +189,10 @@ class FakeMiscOsAccess(MiscOsAccess):
         self.execute_commands_in_parallel_results = []
 
 
-    def execute_command(self, command):
+    def execute_command(self, command, cwd=None, print_command=True):
         self.print_console(self._get_printed_command(command))
+        if cwd:
+            self.current_dir = cwd
         self.execute_command_arg.append( [self.current_dir, command])
         return True
 

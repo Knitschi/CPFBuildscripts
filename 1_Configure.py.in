@@ -35,7 +35,11 @@ Options:
                             int the generated file over the command line.
                             This may be useful on a build-server.
                             <definition> should look something like this:
-                            HUNTER_ROOT=/home/hunter_root
+                            BUILD_SHARED_LIBS=TRUE
+
+                            For implementation reasons, the following variable names are currently forbidden.
+
+                            DERIVED_CONFIG PARENT_CONFIG CPF_ROOT_DIR CPFCMake_DIR CIBuildConfigurations_DIR
 
 --list                      When this argument is given, the script will list
                             the available existing configurations instead
@@ -44,15 +48,22 @@ Options:
 """
 
 import sys
+sys.path.append('@CPFBuildscripts_DIR@')
 
-sys.path.append('@CPF_BUILDSCRIPTS_DIR@')
-
+import os
 from python.docopt import docopt
 from python import buildautomat
 
+_CPFCMake_DIR = '@CPFCMake_DIR@'
+_CIBuildConfigurations_DIR = '@CIBuildConfigurations_DIR@'
+
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version='1_Configure 1.0')
-    _AUTOMAT = buildautomat.BuildAutomat()
+    _AUTOMAT = buildautomat.BuildAutomat(
+        os.path.dirname(os.path.realpath(__file__)),
+        _CPFCMake_DIR,
+        _CIBuildConfigurations_DIR
+        )
     if not _AUTOMAT.configure(_ARGS):
         print("Error: Script 1_Configure.py failed.")
         sys.exit(1)

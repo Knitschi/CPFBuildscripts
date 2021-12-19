@@ -12,9 +12,10 @@ cpfPackageProject(
 set( sources 
     run_tests.py
     0_CopyScripts.py
-    1_Configure.py
-    3_Generate.py
-    4_Make.py
+    1_Configure.py.in
+    2_GetDependencies.py.in
+    3_Generate.py.in
+    4_Make.py.in
     python/buildautomat.py
     python/buildautomat_unit_tests.py
     python/docopt.py

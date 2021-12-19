@@ -23,9 +23,9 @@ class BuildAutomat:
     """
     The entry point for running the various steps of the make-pipeline.
     """
-    def __init__(self):
+    def __init__(self, cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir):
         # Get information about where is what in the cpf
-        self.m_file_locations = filelocations.FileLocations(filelocations.get_cpf_root_dir_from_script_dir())
+        self.m_file_locations = filelocations.FileLocations(cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir)
         # Object to operate on the file-system
         self.m_fs_access = filesystemaccess.FileSystemAccess()
         # Object to access other os functionality
@@ -43,6 +43,9 @@ class BuildAutomat:
             cmake_command = ""
             if args[_LIST_KEY]:
                 cmake_command = "cmake -DLIST_CONFIGURATIONS=TRUE" \
+                    + " -DCPF_ROOT_DIR=" + str(self.m_file_locations.cpf_root_dir) \
+                    + " -DCPFCMake_DIR=" + str(self.m_file_locations.cpf_cmake_dir) \
+                    + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
 
             else:
                 inherited_config = args[_INHERITS_KEY]
@@ -53,6 +56,9 @@ class BuildAutomat:
                 cmake_command = "cmake" \
                             + " -DDERIVED_CONFIG=" + args[_CONFIG_NAME_KEY] \
                             + " -DPARENT_CONFIG=" + inherited_config \
+                            + " -DCPF_ROOT_DIR=" + str(self.m_file_locations.cpf_root_dir) \
+                            + " -DCPFCMake_DIR=" + str(self.m_file_locations.cpf_cmake_dir) \
+                            + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
 
                 # Get the variable definitions
                 definitions = args["-D"]
@@ -62,13 +68,9 @@ class BuildAutomat:
                         cmake_arg_definitions.append("-D" + definition)
                     cmake_command += " " + " ".join(cmake_arg_definitions)
 
-            cmake_command += " -P " + _quotes(
-                self.m_file_locations.get_full_path_cpf_root() /
-                self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
+            cmake_command += " -P " + _quotes(self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
-            
-
-            return self.m_os_access.execute_command(cmake_command)
+            return self.m_os_access.execute_command(cmake_command, print_command=False)
 
         except BaseException as exception:
             return self._print_exception(exception)
@@ -119,7 +121,7 @@ class BuildAutomat:
                 # Do the full generate if no cache file is available.
                 self._call_cmake_with_full_arguments(config_name)
 
-            _print_elapsed_time(start_time, "Generating the make-files took")
+            _print_elapsed_time(self.m_os_access, start_time, "Generating the make-files took")
             self.m_os_access.print_console('SUCCESS!')
             
             return True
@@ -155,7 +157,7 @@ class BuildAutomat:
             return_value = self.m_os_access.execute_command(cmake_build_command)
 
             # Print some final output.
-            _print_elapsed_time(start_time, "The build took")
+            _print_elapsed_time(self.m_os_access, start_time, "The build took")
             if return_value:
                 self.m_os_access.print_console('SUCCESS!')
 
@@ -365,9 +367,9 @@ def _get_option_from_args(args, possible_options):
     return None
 
 
-def _print_elapsed_time(start_time, prefix_string):
+def _print_elapsed_time(os_access, start_time, prefix_string):
     """Prints the time that has elapsed between the given start time and the call of this function."""
     end_time = time.perf_counter()
     time_rounded_seconds = round(end_time - start_time)
     time_string = str(datetime.timedelta(seconds=time_rounded_seconds))
-    print("{0} {1} h:m:s or {2} s".format(prefix_string, time_string, time_rounded_seconds))
+    os_access.print_console("{0} {1} h:m:s or {2} s".format(prefix_string, time_string, time_rounded_seconds))
