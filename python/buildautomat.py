@@ -10,6 +10,7 @@ import datetime
 from . import filelocations
 from . import miscosaccess
 from . import filesystemaccess
+import cpfPackageVersion_CPFBuildscripts
 
 _CONFIG_NAME_KEY = '<config_name>'
 _INHERITS_KEY = '--inherits'
@@ -48,6 +49,9 @@ class BuildAutomat:
                     + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
 
             else:
+                if not args[_CONFIG_NAME_KEY]:
+                    return self._print_exception("Required argument {0} is missing.".format(_CONFIG_NAME_KEY))
+
                 inherited_config = args[_INHERITS_KEY]
                 if not inherited_config:
                     inherited_config = args[_CONFIG_NAME_KEY]
@@ -355,6 +359,18 @@ class BuildAutomat:
         return command
 
 ########### free functions #########################################################################
+def package_version_is_compatible_to_copied_script(copied_script_version):
+    """
+    Returns true if the first digit of the CPFBuildscripts version number is still the same
+    as the first digit of the version number of the copied script in the cpf root directory.
+
+    This is used to catch the case that CPFBuildscripts made an incompatible change that broke
+    the copied build scripts.
+    """
+    copied_script_major_version = copied_script_version.split('.')[0]
+    package_major_version = cpfPackageVersion_CPFBuildscripts.getPackageVersion().split('.')[0]
+    return copied_script_major_version == package_major_version
+
 def _quotes(string):
     return '"' + str(string) + '"'
 

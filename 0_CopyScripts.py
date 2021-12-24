@@ -24,6 +24,7 @@ import shutil
 import os
 import stat
 from python.docopt import docopt
+import cpfPackageVersion_CPFBuildscripts
 
 _SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 _SCRIPTS = ['1_Configure.py.in', '2_GetDependencies.py.in', '3_Generate.py.in', '4_Make.py.in']
@@ -73,6 +74,7 @@ if __name__ == "__main__":
         # work independent of the destination. 
         placeHolderDict = {
             'CPFBuildscripts_DIR': _SCRIPT_DIR,
+            'CPFBuildscripts_VERSION': cpfPackageVersion_CPFBuildscripts.getPackageVersion(),
             'CPFCMake_DIR': abs_CPFCMake_dir,
             'CIBuildConfigurations_DIR': abs_CIBuildConfigurations_dir,
             }
