@@ -22,7 +22,7 @@ sys.path.append('@CPFBuildscripts_DIR@')
 import os
 from python.docopt import docopt
 from python import buildautomat
-import cpfPackageVersion_CPFBuildscripts
+
 
 _CPFCMake_DIR = '@CPFCMake_DIR@'
 _CIBuildConfigurations_DIR = '@CIBuildConfigurations_DIR@'
@@ -31,15 +31,14 @@ _file_copied_from_version = '@CPFBuildscripts_VERSION@'
 if __name__ == "__main__":
     _ARGS = docopt(__doc__, version=_file_copied_from_version)
 
-    if not buildautomat.package_version_is_compatible_to_copied_script(_file_copied_from_version):
-        print("Error: Script 3_Generate.py at version {0} is no longer compatible to your CPFBuildscripts package at version {1}. You need to run 0_CopyScripts.py again to update your local build-scripts.".format(_file_copied_from_version, cpfPackageVersion_CPFBuildscripts.getPackageVersion()))
-        sys.exit(1)
-
     _AUTOMAT = buildautomat.BuildAutomat(
         os.path.dirname(os.path.realpath(__file__)),
         _CPFCMake_DIR,
         _CIBuildConfigurations_DIR
         )
+
+    if not _AUTOMAT.cpf_buildscripts_version_is_compatible_to_copied_script(_file_copied_from_version):
+        sys.exit(1)
 
     if not _AUTOMAT.generate_make_files(_ARGS):
         print("Error: Script 3_Generate.py failed.")

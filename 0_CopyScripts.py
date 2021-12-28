@@ -24,7 +24,8 @@ import shutil
 import os
 import stat
 from python.docopt import docopt
-import cpfPackageVersion_CPFBuildscripts
+from python import buildautomat
+
 
 _SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 _SCRIPTS = ['1_Configure.py.in', '2_GetDependencies.py.in', '3_Generate.py.in', '4_Make.py.in']
@@ -70,11 +71,18 @@ if __name__ == "__main__":
         abs_CPFCMake_dir = toAbsolutePath(cpfRootDir, _ARGS['--CPFCMake_DIR'])
         abs_CIBuildConfigurations_dir = toAbsolutePath(cpfRootDir, _ARGS['--CIBuildConfigurations_DIR'])
 
+        _automat = buildautomat.BuildAutomat(
+            cpfRootDir,
+            abs_CPFCMake_dir,
+            abs_CIBuildConfigurations_dir
+        )
+        cpf_buildscripts_version = _automat.get_package_version(_SCRIPT_DIR)
+
         # Inject the location of CPFBuildscripts into the copied script so imports
         # work independent of the destination. 
         placeHolderDict = {
             'CPFBuildscripts_DIR': _SCRIPT_DIR,
-            'CPFBuildscripts_VERSION': cpfPackageVersion_CPFBuildscripts.getPackageVersion(),
+            'CPFBuildscripts_VERSION': cpf_buildscripts_version,
             'CPFCMake_DIR': abs_CPFCMake_dir,
             'CIBuildConfigurations_DIR': abs_CIBuildConfigurations_dir,
             }

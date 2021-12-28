@@ -20,7 +20,7 @@ class FileLocations:
         self.DEFAULT_INSTALL_DIR = "install"
         self.TARGET_DEPENDENCIES_DOT_FILE_NAME = "CPFDependencies.dot"
         self.GENERATE_CONFIG_FILE_SCRIPT = self.cpf_cmake_dir / "Scripts/createConfigFile.cmake"
-        #self.CONFIG_FILE_TEMPLATE = self.cpf_cmake_dir / "Templates/DeveloperConfigTemplate.cmake.in"
+        self.GET_PACKAGE_VERSION_SCRIPT = self.cpf_cmake_dir / "Scripts/getPackageVersion.cmake"
         self.CONAN_FILE = "conanfile.py"
 
     def get_full_path_cpf_root(self):

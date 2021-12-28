@@ -5,12 +5,14 @@ of the primary build scripts.
 """
 
 import time
+import os
 import datetime
+from pathlib import PurePosixPath
 
 from . import filelocations
 from . import miscosaccess
 from . import filesystemaccess
-import cpfPackageVersion_CPFBuildscripts
+
 
 _CONFIG_NAME_KEY = '<config_name>'
 _INHERITS_KEY = '--inherits'
@@ -32,6 +34,30 @@ class BuildAutomat:
         # Object to access other os functionality
         self.m_os_access = miscosaccess.MiscOsAccess()
 
+    def cpf_buildscripts_version_is_compatible_to_copied_script(self, copied_script_version):
+        """
+        Returns true if the first digit of the CPFBuildscripts version number is still the same
+        as the first digit of the version number of the copied script in the cpf root directory.
+
+        This is used to catch the case that CPFBuildscripts made an incompatible change that broke
+        the copied build scripts.
+        """
+        copied_script_major_version = copied_script_version.split('.')[0]
+
+        buildscripts_dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/')  + '/..'
+        build_scripts_version = self.get_package_version(buildscripts_dir)
+        package_major_version = build_scripts_version.split('.')[0]
+
+        is_compatible = copied_script_major_version == package_major_version
+        if not is_compatible:
+            print("Error: Script 1_Configure.py at version {0} is no longer compatible to your CPFBuildscripts package at version {1}. You need to run 0_CopyScripts.py again to update your local build-scripts.".format(copied_script_version, build_scripts_version))
+
+        return is_compatible
+
+    def get_package_version(self, package_dir):
+        package_dir = package_dir.replace('\\', '/')
+        cmake_command = "cmake -D PACKAGE_DIR={0} -P {1}".format(package_dir,self.m_file_locations.GET_PACKAGE_VERSION_SCRIPT)
+        return self.m_os_access.execute_command_output(cmake_command, print_output=miscosaccess.OutputMode.ON_ERROR)[0]
 
     def configure(self, args):
         """
@@ -359,21 +385,8 @@ class BuildAutomat:
         return command
 
 ########### free functions #########################################################################
-def package_version_is_compatible_to_copied_script(copied_script_version):
-    """
-    Returns true if the first digit of the CPFBuildscripts version number is still the same
-    as the first digit of the version number of the copied script in the cpf root directory.
-
-    This is used to catch the case that CPFBuildscripts made an incompatible change that broke
-    the copied build scripts.
-    """
-    copied_script_major_version = copied_script_version.split('.')[0]
-    package_major_version = cpfPackageVersion_CPFBuildscripts.getPackageVersion().split('.')[0]
-    return copied_script_major_version == package_major_version
-
 def _quotes(string):
     return '"' + str(string) + '"'
-
 
 def _get_option_from_args(args, possible_options):
     for option in possible_options:
