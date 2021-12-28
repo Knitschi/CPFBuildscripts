@@ -68,8 +68,8 @@ if __name__ == "__main__":
         shutil.copyfile(sourcePath, destPath)
 
         # Get the absolute paths to the CPFCMake and CIBuildConfigurations dependencies.
-        abs_CPFCMake_dir = toAbsolutePath(cpfRootDir, _ARGS['--CPFCMake_DIR'])
-        abs_CIBuildConfigurations_dir = toAbsolutePath(cpfRootDir, _ARGS['--CIBuildConfigurations_DIR'])
+        abs_CPFCMake_dir = toAbsolutePath(cpfRootDir, _ARGS['--CPFCMake_DIR']).replace('\\','/')
+        abs_CIBuildConfigurations_dir = toAbsolutePath(cpfRootDir, _ARGS['--CIBuildConfigurations_DIR']).replace('\\','/')
 
         _automat = buildautomat.BuildAutomat(
             cpfRootDir,
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         # Inject the location of CPFBuildscripts into the copied script so imports
         # work independent of the destination. 
         placeHolderDict = {
-            'CPFBuildscripts_DIR': _SCRIPT_DIR,
+            'CPFBuildscripts_DIR': _SCRIPT_DIR.replace('\\','/'),
             'CPFBuildscripts_VERSION': cpf_buildscripts_version,
             'CPFCMake_DIR': abs_CPFCMake_dir,
             'CIBuildConfigurations_DIR': abs_CIBuildConfigurations_dir,
