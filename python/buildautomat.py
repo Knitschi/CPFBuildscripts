@@ -100,7 +100,7 @@ class BuildAutomat:
 
             cmake_command += " -P " + _quotes(self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
-            return self.m_os_access.execute_command(cmake_command, print_command=False)
+            return self.m_os_access.execute_command(cmake_command, print_command=True) # Print the command which may be helpfull when the script is called from other tools.
 
         except BaseException as exception:
             return self._print_exception(exception)
