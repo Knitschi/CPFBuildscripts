@@ -28,39 +28,44 @@ class TestBuildAutomat(unittest.TestCase):
         self.path_to_common_tools = "C:\\path\\to\\CommonTools\\"
         self.cpu_count = 4
 
-        # Setup the system under test
-        self.sut = buildautomat.BuildAutomat(self.cpf_root, self.CPFCMake_DIR, self.CIBuildConfigurations_DIR)
 
         # Replace the FileSystemAccess with a fake implementation that contains
         # The basic folder and file structure.
         self.locations = filelocations.FileLocations(self.cpf_root, self.CPFCMake_DIR, self.CIBuildConfigurations_DIR)
-        self.sut.m_file_locations = self.locations
-        self.sut.m_fs_access = filesystemaccess.FakeFileSystemAccess()
-        # self.sut.m_fs_access.mkdirs(self.locations.getFullPathInfrastructureFolder())
-        self.sut.m_fs_access.mkdirs(self.locations.get_full_path_source_folder())
-        self.sut.m_fs_access.mkdirs(self.locations.get_full_path_source_folder())
+        
+        fs_access = filesystemaccess.FakeFileSystemAccess()
+        # fs_access.mkdirs(self.locations.getFullPathInfrastructureFolder())
+        fs_access.mkdirs(self.locations.get_full_path_source_folder())
+        fs_access.mkdirs(self.locations.get_full_path_source_folder())
 
         # add some source files
         # Module1
-        self.sut.m_fs_access.addfile(
+        fs_access.addfile(
             self.locations.get_full_path_source_folder() / "Module1/bla.h",
             "content")
-        self.sut.m_fs_access.addfile(
+        fs_access.addfile(
             self.locations.get_full_path_source_folder() / "Module1/bla.cpp",
             "content")
-        self.sut.m_fs_access.addfile(
+        fs_access.addfile(
             self.locations.get_full_path_source_folder() / "Module1/bla.ui",
             "content")
         # Module2
-        self.sut.m_fs_access.addfile(
+        fs_access.addfile(
             self.locations.get_full_path_source_folder() / "Module2/blub.h",
             "content")
         # Module3
-        self.sut.m_fs_access.addfile(
+        fs_access.addfile(
             self.locations.get_full_path_source_folder() / "Module3/blar.cpp",
             "content")
         # cmake
-        self.sut.m_fs_access.mkdirs(self.locations.get_full_path_source_folder() / "cmake")
+        fs_access.mkdirs(self.locations.get_full_path_source_folder() / "cmake")
+        # CPFCMake and CIBuildConfigurations directories.
+        fs_access.mkdirs(self.locations.get_full_path_source_folder() / "external/CPFCMake")
+        fs_access.mkdirs(self.locations.get_full_path_source_folder() / "CIBuildConfigurations")
+
+        # Setup the system under test
+        self.sut = buildautomat.BuildAutomat(self.cpf_root, self.CPFCMake_DIR, self.CIBuildConfigurations_DIR, filesystemaccess=fs_access)
+        self.sut.m_file_locations = self.locations
 
         # use the windows os access as default
         self.sut.m_os_access = self._get_fake_os_access(_WINDOWS)
@@ -100,9 +105,9 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=MyProjectConfig '
-            '-DCPF_ROOT_DIR=/MyCPFProject '
-            '-DCPFCMake_DIR=/MyCPFProject/Sources/external/CPFCMake '
-            '-DCIBuildConfigurations_DIR=/MyCPFProject/Sources/CIBuildConfigurations '
+            '-DCPF_ROOT_DIR="/MyCPFProject" '
+            '-DCPFCMake_DIR="/MyCPFProject/Sources/external/CPFCMake" '
+            '-DCIBuildConfigurations_DIR="/MyCPFProject/Sources/CIBuildConfigurations" '
             '-DCMAKE_GENERATOR="Visual Studio 14 2015 Amd64" '
             '-DCPF_TEST_FILES_DIR="C:/Temp bla/Tests" '
             '-P "/MyCPFProject/Sources/external/CPFCMake/Scripts/createConfigFile.cmake"'
@@ -130,9 +135,9 @@ class TestBuildAutomat(unittest.TestCase):
             'cmake '
             '-DDERIVED_CONFIG=MyConfig '
             '-DPARENT_CONFIG=MyConfig '
-            '-DCPF_ROOT_DIR=/MyCPFProject '
-            '-DCPFCMake_DIR=/MyCPFProject/Sources/external/CPFCMake '
-            '-DCIBuildConfigurations_DIR=/MyCPFProject/Sources/CIBuildConfigurations '
+            '-DCPF_ROOT_DIR="/MyCPFProject" '
+            '-DCPFCMake_DIR="/MyCPFProject/Sources/external/CPFCMake" '
+            '-DCIBuildConfigurations_DIR="/MyCPFProject/Sources/CIBuildConfigurations" '
             '-P "/MyCPFProject/Sources/external/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
@@ -157,9 +162,9 @@ class TestBuildAutomat(unittest.TestCase):
         expected_command = (
             'cmake '
             '-DLIST_CONFIGURATIONS=TRUE '
-            '-DCPF_ROOT_DIR=/MyCPFProject '
-            '-DCPFCMake_DIR=/MyCPFProject/Sources/external/CPFCMake '
-            '-DCIBuildConfigurations_DIR=/MyCPFProject/Sources/CIBuildConfigurations '
+            '-DCPF_ROOT_DIR="/MyCPFProject" '
+            '-DCPFCMake_DIR="/MyCPFProject/Sources/external/CPFCMake" '
+            '-DCIBuildConfigurations_DIR="/MyCPFProject/Sources/CIBuildConfigurations" '
             '-P "/MyCPFProject/Sources/external/CPFCMake/Scripts/createConfigFile.cmake"'
             )
         self.assertEqual(
