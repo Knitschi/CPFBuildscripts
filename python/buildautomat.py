@@ -56,7 +56,7 @@ class BuildAutomat:
 
     def get_package_version(self, package_dir):
         package_dir = package_dir.replace('\\', '/')
-        cmake_command = "cmake -D PACKAGE_DIR={0} -P {1}".format(package_dir,self.m_file_locations.GET_PACKAGE_VERSION_SCRIPT)
+        cmake_command = "cmake -D PACKAGE_DIR=\"{0}\" -P \"{1}\"".format(package_dir,self.m_file_locations.GET_PACKAGE_VERSION_SCRIPT)
         return self.m_os_access.execute_command_output(cmake_command, print_output=miscosaccess.OutputMode.ON_ERROR)[0]
 
     def configure(self, args):
