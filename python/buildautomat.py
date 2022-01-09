@@ -78,9 +78,9 @@ class BuildAutomat:
             cmake_command = ""
             if args[_LIST_KEY]:
                 cmake_command = "cmake -DLIST_CONFIGURATIONS=TRUE" \
-                    + " -DCPF_ROOT_DIR=" + str(self.m_file_locations.cpf_root_dir) \
-                    + " -DCPFCMake_DIR=" + str(self.m_file_locations.cpf_cmake_dir) \
-                    + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
+                    + " -DCPF_ROOT_DIR=" + _quotes(str(self.m_file_locations.cpf_root_dir)) \
+                    + " -DCPFCMake_DIR=" + _quotes(str(self.m_file_locations.cpf_cmake_dir)) \
+                    + " -DCIBuildConfigurations_DIR=" + _quotes(str(self.m_file_locations.cibuildconfigurations_dir)) \
 
             else:
                 if not args[_CONFIG_NAME_KEY]:
@@ -94,9 +94,9 @@ class BuildAutomat:
                 cmake_command = "cmake" \
                             + " -DDERIVED_CONFIG=" + args[_CONFIG_NAME_KEY] \
                             + " -DPARENT_CONFIG=" + inherited_config \
-                            + " -DCPF_ROOT_DIR=" + str(self.m_file_locations.cpf_root_dir) \
-                            + " -DCPFCMake_DIR=" + str(self.m_file_locations.cpf_cmake_dir) \
-                            + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
+                            + " -DCPF_ROOT_DIR=" + _quotes(str(self.m_file_locations.cpf_root_dir)) \
+                            + " -DCPFCMake_DIR=" + _quotes(str(self.m_file_locations.cpf_cmake_dir)) \
+                            + " -DCIBuildConfigurations_DIR=" + _quotes(str(self.m_file_locations.cibuildconfigurations_dir)) \
 
                 # Get the variable definitions
                 definitions = args["-D"]
