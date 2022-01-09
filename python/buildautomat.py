@@ -27,10 +27,18 @@ class BuildAutomat:
     The entry point for running the various steps of the make-pipeline.
     """
     def __init__(self, cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir):
-        # Get information about where is what in the cpf
-        self.m_file_locations = filelocations.FileLocations(cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir)
+
         # Object to operate on the file-system
         self.m_fs_access = filesystemaccess.FileSystemAccess()
+
+        if not self.m_fs_access.exists(cpf_cmake_dir):
+            raise Exception("The given directory CPFCMake_DIR \"{0}\" does not exist.".format(cpf_cmake_dir))
+
+        if not self.m_fs_access.exists(cibuildconfigurations_dir):
+            raise Exception("The given directory CIBuildConfigurations_DIR \"{0}\" does not exist.".format(cibuildconfigurations_dir))
+
+        # Get information about where is what in the cpf
+        self.m_file_locations = filelocations.FileLocations(cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir)
         # Object to access other os functionality
         self.m_os_access = miscosaccess.MiscOsAccess()
 
