@@ -26,11 +26,19 @@ class BuildAutomat:
     """
     The entry point for running the various steps of the make-pipeline.
     """
-    def __init__(self, cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir):
+    def __init__(self, cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir, filesystemaccess=filesystemaccess.FileSystemAccess()):
+
+        # Object to operate on the file-system
+        self.m_fs_access = filesystemaccess
+
+        if not self.m_fs_access.exists(cpf_cmake_dir):
+            raise Exception("The given directory CPFCMake_DIR \"{0}\" does not exist.".format(cpf_cmake_dir))
+
+        if not self.m_fs_access.exists(cibuildconfigurations_dir):
+            raise Exception("The given directory CIBuildConfigurations_DIR \"{0}\" does not exist.".format(cibuildconfigurations_dir))
+
         # Get information about where is what in the cpf
         self.m_file_locations = filelocations.FileLocations(cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir)
-        # Object to operate on the file-system
-        self.m_fs_access = filesystemaccess.FileSystemAccess()
         # Object to access other os functionality
         self.m_os_access = miscosaccess.MiscOsAccess()
 
@@ -56,7 +64,7 @@ class BuildAutomat:
 
     def get_package_version(self, package_dir):
         package_dir = package_dir.replace('\\', '/')
-        cmake_command = "cmake -D PACKAGE_DIR={0} -P {1}".format(package_dir,self.m_file_locations.GET_PACKAGE_VERSION_SCRIPT)
+        cmake_command = "cmake -D PACKAGE_DIR=\"{0}\" -P \"{1}\"".format(package_dir,self.m_file_locations.GET_PACKAGE_VERSION_SCRIPT)
         return self.m_os_access.execute_command_output(cmake_command, print_output=miscosaccess.OutputMode.ON_ERROR)[0]
 
     def configure(self, args):
@@ -70,9 +78,9 @@ class BuildAutomat:
             cmake_command = ""
             if args[_LIST_KEY]:
                 cmake_command = "cmake -DLIST_CONFIGURATIONS=TRUE" \
-                    + " -DCPF_ROOT_DIR=" + str(self.m_file_locations.cpf_root_dir) \
-                    + " -DCPFCMake_DIR=" + str(self.m_file_locations.cpf_cmake_dir) \
-                    + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
+                    + " -DCPF_ROOT_DIR=" + _quotes(str(self.m_file_locations.cpf_root_dir)) \
+                    + " -DCPFCMake_DIR=" + _quotes(str(self.m_file_locations.cpf_cmake_dir)) \
+                    + " -DCIBuildConfigurations_DIR=" + _quotes(str(self.m_file_locations.cibuildconfigurations_dir)) \
 
             else:
                 if not args[_CONFIG_NAME_KEY]:
@@ -86,9 +94,9 @@ class BuildAutomat:
                 cmake_command = "cmake" \
                             + " -DDERIVED_CONFIG=" + args[_CONFIG_NAME_KEY] \
                             + " -DPARENT_CONFIG=" + inherited_config \
-                            + " -DCPF_ROOT_DIR=" + str(self.m_file_locations.cpf_root_dir) \
-                            + " -DCPFCMake_DIR=" + str(self.m_file_locations.cpf_cmake_dir) \
-                            + " -DCIBuildConfigurations_DIR=" + str(self.m_file_locations.cibuildconfigurations_dir) \
+                            + " -DCPF_ROOT_DIR=" + _quotes(str(self.m_file_locations.cpf_root_dir)) \
+                            + " -DCPFCMake_DIR=" + _quotes(str(self.m_file_locations.cpf_cmake_dir)) \
+                            + " -DCIBuildConfigurations_DIR=" + _quotes(str(self.m_file_locations.cibuildconfigurations_dir)) \
 
                 # Get the variable definitions
                 definitions = args["-D"]
@@ -100,7 +108,7 @@ class BuildAutomat:
 
             cmake_command += " -P " + _quotes(self.m_file_locations.GENERATE_CONFIG_FILE_SCRIPT)
 
-            return self.m_os_access.execute_command(cmake_command, print_command=False)
+            return self.m_os_access.execute_command(cmake_command, print_command=True) # Print the command which may be helpfull when the script is called from other tools.
 
         except BaseException as exception:
             return self._print_exception(exception)
