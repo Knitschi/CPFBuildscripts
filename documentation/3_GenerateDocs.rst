@@ -1,5 +1,5 @@
 
-3_Generate.py
+2_Generate.py
 =============
 
 This script runs the CMake generate step that creates the native "make files" for you chosen generator.
@@ -10,7 +10,7 @@ Command Line Interface
 .. code-block:: bash
 
   Usage:
-      3_Generate.py [<config_name>] [--clean] [--help]
+      2_Generate.py [<config_name>] [--clean] [--help]
 
       Running this script will run CMake to generate the "make-files" for the given
       configuration. <config_name> must be the base-name of a configuration file

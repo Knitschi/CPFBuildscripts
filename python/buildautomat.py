@@ -113,27 +113,6 @@ class BuildAutomat:
         except BaseException as exception:
             return self._print_exception(exception)
 
-
-    def get_dependencies(self, args):
-        """
-        Runs conan to get external binary packages.
-        """
-        try:
-
-            if not self.m_fs_access.exists(self.m_file_locations.get_full_path_conan_file()):
-                # If there is no conanfile we consider this step to be not necessary an always return true.
-                self.m_os_access.print_console("Found no conanfile. No external packages were acquired.")
-                return True
-            else:
-                # Get the conan packages for the specified configuration.
-                config_name = self._get_config_name_and_run_config_step_if_needed(args)
-                self._call_conan_install(config_name)
-
-            return True
-
-        except BaseException as exception:
-            return self._print_exception(exception)
-
     def generate_make_files(self, args):
         """
         Runs the cmake to create the makefiles.
@@ -188,7 +167,7 @@ class BuildAutomat:
             else:
                 config_name = self._get_first_config_that_has_cache_file()
                 if not config_name:
-                    return self._print_exception("No existing CMakeCache.txt file found. You need to run 3_Generate.py before running 4_Make.py")
+                    return self._print_exception("No existing CMakeCache.txt file found. You need to run 2_Generate.py before running 3_Make.py")
 
             # We not have a configuration with a cache file and can call cmake to build it.
             cmake_build_command = self._get_cmake_build_command(config_name, args)
@@ -291,28 +270,6 @@ class BuildAutomat:
 
     def _has_conanfile(self):
         return self.m_fs_access.exists(self.m_file_locations.get_full_path_conan_file())
-
-    def _call_conan_install(self, config_name):
-        """
-        runs the 
-        
-        conan install -pr conan-profile -if generated-files-dir source-dir --build=missing
-        
-        command
-        """
-        conanProfilePath = self.m_file_locations.get_full_path_source_folder() / ('CIBuildConfigurations/ConanProfile-' + config_name)
-
-        if not self.m_fs_access.exists(conanProfilePath):
-            # Todo: Clear how profiles are handled.
-            raise Exception("2_GetDependencies.py currently expects a conan profile file {0} to exist.".format(conanProfilePath))
-
-        conan_command = "conan install -pr {0} -if {1} {2} --build=missing".format(
-            _quotes(conanProfilePath),
-            _quotes(self.m_file_locations.get_full_path_conan_generated_cmake_files_dir(config_name)),
-            _quotes(self.m_file_locations.get_full_path_cpf_root()))
-
-        if not self.m_os_access.execute_command(conan_command):
-            raise Exception("The python script failed because the call to conan failed!")
 
     def _has_existing_cache_file(self, config_name):
         cache_file_path = self.m_file_locations.get_full_path_generated_folder() / config_name / "CMakeCache.txt"

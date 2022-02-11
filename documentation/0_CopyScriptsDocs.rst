@@ -19,9 +19,8 @@ Command Line Interface
         This script is used to copy the build scripts
 
         1_Configure.py
-        2_GetDependencies.py
-        3_Generate.py
-        4_Make.py
+        2_Generate.py
+        3_Make.py
 
         into the root directory of a CMakeProjectFramework repository.
 

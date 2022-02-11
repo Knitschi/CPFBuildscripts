@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Usage:
-    3_Generate.py [<config_name>] [--clean] [--help]
+    2_Generate.py [<config_name>] [--clean] [--help]
 
     Running this script will run CMake to generate the "make-files" for the given
     configuration. <config_name> must be the base-name of a configuration file
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if not _AUTOMAT.generate_make_files(_ARGS):
-        print("Error: Script 3_Generate.py failed.")
+        print("Error: Script 2_Generate.py failed.")
         sys.exit(2)
     else:
         sys.exit(0)

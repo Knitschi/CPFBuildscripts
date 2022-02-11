@@ -5,9 +5,8 @@
     This script is used to copy the build scripts
 
     1_Configure.py
-    2_GetDependencies.py
-    3_Generate.py
-    4_Make.py
+    2_Generate.py
+    3_Make.py
 
     into the root directory of a CMakeProjectFramework repository.
 
@@ -28,7 +27,7 @@ from python import buildautomat
 
 
 _SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-_SCRIPTS = ['1_Configure.py.in', '2_GetDependencies.py.in', '3_Generate.py.in', '4_Make.py.in']
+_SCRIPTS = ['1_Configure.py.in', '2_Generate.py.in', '3_Make.py.in']
 
 def replacePlaceHolder(filePath, placeHolderDict):
     """
