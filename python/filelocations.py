@@ -11,9 +11,9 @@ class FileLocations:
     """
 
     def __init__(self, cpf_root_dir, cpf_cmake_dir, cibuildconfigurations_dir):
-        self.cpf_root_dir = PurePosixPath(cpf_root_dir.replace('\\', '/'))
-        self.cpf_cmake_dir =  PurePosixPath(cpf_cmake_dir.replace('\\', '/'))
-        self.cibuildconfigurations_dir =  PurePosixPath(cibuildconfigurations_dir.replace('\\', '/'))
+        self.cpf_root_dir = PurePosixPath(str(cpf_root_dir).replace('\\', '/'))
+        self.cpf_cmake_dir =  PurePosixPath(str(cpf_cmake_dir).replace('\\', '/'))
+        self.cibuildconfigurations_dir =  PurePosixPath(str(cibuildconfigurations_dir).replace('\\', '/'))
         self.CMAKELISTS_ROOT_DIR = "Sources"
         self.GENERATED_FILES_DIR = "Generated"
         self.CONFIGURATION_FILES_DIR = "Configuration"
@@ -42,8 +42,8 @@ class FileLocations:
         makefile_directory = self.get_full_path_generated_folder().joinpath(configName)
         return makefile_directory
 
-    def get_full_path_binary_output_folder(self, package, configName, compilerConfig):
-        return self.get_full_path_config_makefile_folder(configName) / "BuildStage" / compilerConfig / package
+    def get_full_path_binary_output_folder(self, configName, compilerConfig):
+        return self.get_full_path_config_makefile_folder(configName) / "BuildStage" / compilerConfig 
 
     def get_config_file_ending(self):
         return ".config.cmake"
