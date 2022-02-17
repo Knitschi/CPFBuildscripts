@@ -75,6 +75,15 @@ class FileSystemAccess:
         shutil.copyfile(str(path_from), str(path_to))
 
 
+    def move(self, path_from, path_to):
+        """Moves a file"""
+        shutil.move(str(path_from), str(path_to))
+
+
+    def remove(self, path):
+        os.remove(str(path))
+
+
     def copytree(self, src, dst, symlinks = False, ignore = None):
         """ 
         Copies the content for directory src into directory dst.
@@ -114,6 +123,10 @@ class FileSystemAccess:
         file_string = str(file_path)
         with open(file_string, 'a'):
             os.utime(file_string, None)
+
+    def addfile(self, path, content):
+        with open(path, 'w') as f:
+            f.write(content)
 
 
 class FakeFileSystemAccess():
