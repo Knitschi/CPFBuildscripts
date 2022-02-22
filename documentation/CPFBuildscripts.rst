@@ -22,7 +22,6 @@ Index
   ../README
   0_CopyScriptsDocs
   1_ConfigureDocs
-  2_GetDependenciesDocs
-  3_GenerateDocs
-  4_MakeDocs
+  2_GenerateDocs
+  3_MakeDocs
 
